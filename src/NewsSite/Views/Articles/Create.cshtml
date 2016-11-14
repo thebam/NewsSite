@@ -1,0 +1,107 @@
+@model NewsSite.Models.Article
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h2>Create</h2>
+
+<form asp-action="Create">
+    <div class="form-horizontal">
+        <h4>Article</h4>
+        <hr />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="Body" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Body" class="form-control" />
+                <span asp-validation-for="Body" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="DateCreated" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="DateCreated" class="form-control" />
+                <span asp-validation-for="DateCreated" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="DateModified" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="DateModified" class="form-control" />
+                <span asp-validation-for="DateModified" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="EndDate" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="EndDate" class="form-control" />
+                <span asp-validation-for="EndDate" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="OGDescription" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="OGDescription" class="form-control" />
+                <span asp-validation-for="OGDescription" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="OGImage" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="OGImage" class="form-control" />
+                <span asp-validation-for="OGImage" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="OGTitle" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="OGTitle" class="form-control" />
+                <span asp-validation-for="OGTitle" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="StartDate" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="StartDate" class="form-control" />
+                <span asp-validation-for="StartDate" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Title" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="URL" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="URL" class="form-control" />
+                <span asp-validation-for="URL" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="ArticleMediaKitFiles" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="ArticleMediaKitFiles" class="form-control"  type="file" name="file" />
+                <span asp-validation-for="URL" class="text-danger" />
+            </div>
+        </div>
+        
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

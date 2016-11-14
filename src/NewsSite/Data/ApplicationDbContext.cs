@@ -22,5 +22,12 @@ namespace NewsSite.Data
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
         }
+
+        public DbSet<Article> Article { get; set; }
+        public DbSet<MediaKitFile> MediaKitFile { get; set; }
+        public DbSet<Tag> Tag { get; set; }
+        public DbSet<Owner> Owner { get; set; }
+        public DbSet<ArticleMediaKitFile> ArticleMediaKitFile { get; set; }
+        public DbSet<ArticleTag> ArticleTag { get; set; }
     }
 }

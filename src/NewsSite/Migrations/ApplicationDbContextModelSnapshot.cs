@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
+using NewsSite.Data;
 
-namespace NewsSite.Data.Migrations
+namespace NewsSite.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
@@ -15,7 +13,7 @@ namespace NewsSite.Data.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
             modelBuilder
-                .HasAnnotation("ProductVersion", "1.0.0-rc3")
+                .HasAnnotation("ProductVersion", "1.0.1")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityRole", b =>
@@ -174,6 +172,156 @@ namespace NewsSite.Data.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("NewsSite.Models.Article", b =>
+                {
+                    b.Property<int>("ArticleId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Body")
+                        .IsRequired();
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<DateTime>("DateModified");
+
+                    b.Property<DateTime>("EndDate");
+
+                    b.Property<string>("OGDescription")
+                        .IsRequired()
+                        .HasAnnotation("MaxLength", 140);
+
+                    b.Property<string>("OGImage")
+                        .IsRequired();
+
+                    b.Property<string>("OGTitle")
+                        .IsRequired()
+                        .HasAnnotation("MaxLength", 140);
+
+                    b.Property<DateTime>("StartDate");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasAnnotation("MaxLength", 256);
+
+                    b.Property<string>("URL")
+                        .IsRequired()
+                        .HasAnnotation("MaxLength", 256);
+
+                    b.HasKey("ArticleId");
+
+                    b.ToTable("Article");
+                });
+
+            modelBuilder.Entity("NewsSite.Models.ArticleMediaKitFile", b =>
+                {
+                    b.Property<int>("ArticleMediaKitFileId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("ArticleId");
+
+                    b.Property<int>("MediaKitFileId");
+
+                    b.HasKey("ArticleMediaKitFileId");
+
+                    b.HasIndex("ArticleId");
+
+                    b.HasIndex("MediaKitFileId");
+
+                    b.ToTable("ArticleMediaKitFile");
+                });
+
+            modelBuilder.Entity("NewsSite.Models.ArticleTag", b =>
+                {
+                    b.Property<int>("ArticleTagId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("ArticleId");
+
+                    b.Property<int>("TagId");
+
+                    b.HasKey("ArticleTagId");
+
+                    b.HasIndex("ArticleId");
+
+                    b.HasIndex("TagId");
+
+                    b.ToTable("ArticleTag");
+                });
+
+            modelBuilder.Entity("NewsSite.Models.MediaKitFile", b =>
+                {
+                    b.Property<int>("MediaKitFileId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<DateTime>("DateModified");
+
+                    b.Property<string>("Description")
+                        .IsRequired();
+
+                    b.Property<bool>("Enabled");
+
+                    b.Property<string>("MediaType");
+
+                    b.Property<int>("OwnerId");
+
+                    b.Property<string>("ThumbnailURL");
+
+                    b.Property<string>("URL")
+                        .IsRequired();
+
+                    b.HasKey("MediaKitFileId");
+
+                    b.HasIndex("OwnerId");
+
+                    b.ToTable("MediaKitFile");
+                });
+
+            modelBuilder.Entity("NewsSite.Models.Owner", b =>
+                {
+                    b.Property<int>("OwnerId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Address");
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<string>("Email");
+
+                    b.Property<bool>("Enabled");
+
+                    b.Property<string>("Name")
+                        .IsRequired();
+
+                    b.Property<string>("Phone");
+
+                    b.Property<string>("SocialMedia");
+
+                    b.Property<string>("Website");
+
+                    b.HasKey("OwnerId");
+
+                    b.ToTable("Owner");
+                });
+
+            modelBuilder.Entity("NewsSite.Models.Tag", b =>
+                {
+                    b.Property<int>("TagId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<bool>("Enabled");
+
+                    b.Property<string>("TagName")
+                        .IsRequired();
+
+                    b.HasKey("TagId");
+
+                    b.ToTable("Tag");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityRole")
@@ -208,6 +356,40 @@ namespace NewsSite.Data.Migrations
                     b.HasOne("NewsSite.Models.ApplicationUser")
                         .WithMany("Roles")
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("NewsSite.Models.ArticleMediaKitFile", b =>
+                {
+                    b.HasOne("NewsSite.Models.Article", "Article")
+                        .WithMany("ArticleMediaKitFiles")
+                        .HasForeignKey("ArticleId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("NewsSite.Models.MediaKitFile", "MediaKitFile")
+                        .WithMany("ArticleMediaKitFiles")
+                        .HasForeignKey("MediaKitFileId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("NewsSite.Models.ArticleTag", b =>
+                {
+                    b.HasOne("NewsSite.Models.Article", "Article")
+                        .WithMany("ArticleTags")
+                        .HasForeignKey("ArticleId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("NewsSite.Models.Tag", "Tag")
+                        .WithMany("ArticleTags")
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("NewsSite.Models.MediaKitFile", b =>
+                {
+                    b.HasOne("NewsSite.Models.Owner", "Owner")
+                        .WithMany()
+                        .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
         }

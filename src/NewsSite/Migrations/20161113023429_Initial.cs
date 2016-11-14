@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace NewsSite.Data.Migrations
+namespace NewsSite.Migrations
 {
-    public partial class CreateIdentitySchema : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -62,6 +60,63 @@ namespace NewsSite.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Article",
+                columns: table => new
+                {
+                    ArticleId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Body = table.Column<string>(nullable: false),
+                    DateCreated = table.Column<DateTime>(nullable: false),
+                    DateModified = table.Column<DateTime>(nullable: false),
+                    EndDate = table.Column<DateTime>(nullable: false),
+                    OGDescription = table.Column<string>(maxLength: 140, nullable: false),
+                    OGImage = table.Column<string>(nullable: false),
+                    OGTitle = table.Column<string>(maxLength: 140, nullable: false),
+                    StartDate = table.Column<DateTime>(nullable: false),
+                    Title = table.Column<string>(maxLength: 256, nullable: false),
+                    URL = table.Column<string>(maxLength: 256, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Article", x => x.ArticleId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Owner",
+                columns: table => new
+                {
+                    OwnerId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Address = table.Column<string>(nullable: true),
+                    DateCreated = table.Column<DateTime>(nullable: false),
+                    Email = table.Column<string>(nullable: true),
+                    Enabled = table.Column<bool>(nullable: false),
+                    Name = table.Column<string>(nullable: false),
+                    Phone = table.Column<string>(nullable: true),
+                    SocialMedia = table.Column<string>(nullable: true),
+                    Website = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Owner", x => x.OwnerId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Tag",
+                columns: table => new
+                {
+                    TagId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    DateCreated = table.Column<DateTime>(nullable: false),
+                    Enabled = table.Column<bool>(nullable: false),
+                    TagName = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tag", x => x.TagId);
                 });
 
             migrationBuilder.CreateTable(
@@ -150,6 +205,84 @@ namespace NewsSite.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "MediaKitFile",
+                columns: table => new
+                {
+                    MediaKitFileId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    DateCreated = table.Column<DateTime>(nullable: false),
+                    DateModified = table.Column<DateTime>(nullable: false),
+                    Description = table.Column<string>(nullable: false),
+                    Enabled = table.Column<bool>(nullable: false),
+                    MediaType = table.Column<string>(nullable: true),
+                    OwnerId = table.Column<int>(nullable: false),
+                    ThumbnailURL = table.Column<string>(nullable: true),
+                    URL = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MediaKitFile", x => x.MediaKitFileId);
+                    table.ForeignKey(
+                        name: "FK_MediaKitFile_Owner_OwnerId",
+                        column: x => x.OwnerId,
+                        principalTable: "Owner",
+                        principalColumn: "OwnerId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ArticleTag",
+                columns: table => new
+                {
+                    ArticleTagId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    ArticleId = table.Column<int>(nullable: false),
+                    TagId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ArticleTag", x => x.ArticleTagId);
+                    table.ForeignKey(
+                        name: "FK_ArticleTag_Article_ArticleId",
+                        column: x => x.ArticleId,
+                        principalTable: "Article",
+                        principalColumn: "ArticleId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ArticleTag_Tag_TagId",
+                        column: x => x.TagId,
+                        principalTable: "Tag",
+                        principalColumn: "TagId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ArticleMediaKitFile",
+                columns: table => new
+                {
+                    ArticleMediaKitFileId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    ArticleId = table.Column<int>(nullable: false),
+                    MediaKitFileId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ArticleMediaKitFile", x => x.ArticleMediaKitFileId);
+                    table.ForeignKey(
+                        name: "FK_ArticleMediaKitFile_Article_ArticleId",
+                        column: x => x.ArticleId,
+                        principalTable: "Article",
+                        principalColumn: "ArticleId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ArticleMediaKitFile_MediaKitFile_MediaKitFileId",
+                        column: x => x.MediaKitFileId,
+                        principalTable: "MediaKitFile",
+                        principalColumn: "MediaKitFileId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
                 table: "AspNetRoles",
@@ -190,6 +323,31 @@ namespace NewsSite.Data.Migrations
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ArticleMediaKitFile_ArticleId",
+                table: "ArticleMediaKitFile",
+                column: "ArticleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ArticleMediaKitFile_MediaKitFileId",
+                table: "ArticleMediaKitFile",
+                column: "MediaKitFileId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ArticleTag_ArticleId",
+                table: "ArticleTag",
+                column: "ArticleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ArticleTag_TagId",
+                table: "ArticleTag",
+                column: "TagId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MediaKitFile_OwnerId",
+                table: "MediaKitFile",
+                column: "OwnerId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -210,10 +368,28 @@ namespace NewsSite.Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "ArticleMediaKitFile");
+
+            migrationBuilder.DropTable(
+                name: "ArticleTag");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "MediaKitFile");
+
+            migrationBuilder.DropTable(
+                name: "Article");
+
+            migrationBuilder.DropTable(
+                name: "Tag");
+
+            migrationBuilder.DropTable(
+                name: "Owner");
         }
     }
 }
