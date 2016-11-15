@@ -40,10 +40,12 @@ namespace NewsSite.Models
         public DateTime DateModified { get; set; }
         [Required]
         [Display(Name ="Start Date")]
-        [DisplayFormat(DataFormatString = "0:MM/dd/yyyy h:mm t")]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy h:mm t}",ApplyFormatInEditMode =true)]
         public DateTime StartDate { get; set; }
         [Display(Name ="End Date")]
-        [DisplayFormat(DataFormatString = "0:MM/dd/yyyy h:mm t")]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy h:mm t}", ApplyFormatInEditMode = true)]
         public DateTime EndDate { get; set; }
         public virtual ICollection<ArticleMediaKitFile> ArticleMediaKitFiles { get; set; }
         public virtual ICollection<ArticleTag> ArticleTags { get; set; }

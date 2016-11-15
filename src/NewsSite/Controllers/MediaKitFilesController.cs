@@ -10,22 +10,23 @@ using NewsSite.Models;
 
 namespace NewsSite.Controllers
 {
-    public class ArticlesController : Controller
+    public class MediaKitFilesController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public ArticlesController(ApplicationDbContext context)
+        public MediaKitFilesController(ApplicationDbContext context)
         {
             _context = context;    
         }
 
-        // GET: Articles
+        // GET: MediaKitFiles
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Article.ToListAsync());
+            var applicationDbContext = _context.MediaKitFile.Include(m => m.Owner);
+            return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: Articles/Details/5
+        // GET: MediaKitFiles/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,40 +34,40 @@ namespace NewsSite.Controllers
                 return NotFound();
             }
 
-            var article = await _context.Article.SingleOrDefaultAsync(m => m.ArticleId == id);
-            if (article == null)
+            var mediaKitFile = await _context.MediaKitFile.SingleOrDefaultAsync(m => m.MediaKitFileId == id);
+            if (mediaKitFile == null)
             {
                 return NotFound();
             }
 
-            return View(article);
+            return View(mediaKitFile);
         }
 
-        // GET: Articles/Create
+        // GET: MediaKitFiles/Create
         public IActionResult Create()
         {
-            List<Tag> tags = _context.Tag.ToList<Tag>();
-            ViewBag.tags = tags;
+            ViewData["OwnerId"] = new SelectList(_context.Owner, "OwnerId", "Name");
             return View();
         }
 
-        // POST: Articles/Create
+        // POST: MediaKitFiles/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ArticleId,Body,DateCreated,DateModified,EndDate,OGDescription,OGImage,OGTitle,StartDate,Title,URL")] Article article)
+        public async Task<IActionResult> Create([Bind("MediaKitFileId,DateCreated,DateModified,Description,Enabled,MediaType,OwnerId,ThumbnailURL,URL")] MediaKitFile mediaKitFile)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(article);
+                _context.Add(mediaKitFile);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-            return View(article);
+            ViewData["OwnerId"] = new SelectList(_context.Owner, "OwnerId", "Name", mediaKitFile.OwnerId);
+            return View(mediaKitFile);
         }
 
-        // GET: Articles/Edit/5
+        // GET: MediaKitFiles/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -74,22 +75,23 @@ namespace NewsSite.Controllers
                 return NotFound();
             }
 
-            var article = await _context.Article.SingleOrDefaultAsync(m => m.ArticleId == id);
-            if (article == null)
+            var mediaKitFile = await _context.MediaKitFile.SingleOrDefaultAsync(m => m.MediaKitFileId == id);
+            if (mediaKitFile == null)
             {
                 return NotFound();
             }
-            return View(article);
+            ViewData["OwnerId"] = new SelectList(_context.Owner, "OwnerId", "Name", mediaKitFile.OwnerId);
+            return View(mediaKitFile);
         }
 
-        // POST: Articles/Edit/5
+        // POST: MediaKitFiles/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ArticleId,Body,DateCreated,DateModified,EndDate,OGDescription,OGImage,OGTitle,StartDate,Title,URL")] Article article)
+        public async Task<IActionResult> Edit(int id, [Bind("MediaKitFileId,DateCreated,DateModified,Description,Enabled,MediaType,OwnerId,ThumbnailURL,URL")] MediaKitFile mediaKitFile)
         {
-            if (id != article.ArticleId)
+            if (id != mediaKitFile.MediaKitFileId)
             {
                 return NotFound();
             }
@@ -98,12 +100,12 @@ namespace NewsSite.Controllers
             {
                 try
                 {
-                    _context.Update(article);
+                    _context.Update(mediaKitFile);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ArticleExists(article.ArticleId))
+                    if (!MediaKitFileExists(mediaKitFile.MediaKitFileId))
                     {
                         return NotFound();
                     }
@@ -114,10 +116,11 @@ namespace NewsSite.Controllers
                 }
                 return RedirectToAction("Index");
             }
-            return View(article);
+            ViewData["OwnerId"] = new SelectList(_context.Owner, "OwnerId", "Name", mediaKitFile.OwnerId);
+            return View(mediaKitFile);
         }
 
-        // GET: Articles/Delete/5
+        // GET: MediaKitFiles/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -125,29 +128,29 @@ namespace NewsSite.Controllers
                 return NotFound();
             }
 
-            var article = await _context.Article.SingleOrDefaultAsync(m => m.ArticleId == id);
-            if (article == null)
+            var mediaKitFile = await _context.MediaKitFile.SingleOrDefaultAsync(m => m.MediaKitFileId == id);
+            if (mediaKitFile == null)
             {
                 return NotFound();
             }
 
-            return View(article);
+            return View(mediaKitFile);
         }
 
-        // POST: Articles/Delete/5
+        // POST: MediaKitFiles/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var article = await _context.Article.SingleOrDefaultAsync(m => m.ArticleId == id);
-            _context.Article.Remove(article);
+            var mediaKitFile = await _context.MediaKitFile.SingleOrDefaultAsync(m => m.MediaKitFileId == id);
+            _context.MediaKitFile.Remove(mediaKitFile);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }
 
-        private bool ArticleExists(int id)
+        private bool MediaKitFileExists(int id)
         {
-            return _context.Article.Any(e => e.ArticleId == id);
+            return _context.MediaKitFile.Any(e => e.MediaKitFileId == id);
         }
     }
 }

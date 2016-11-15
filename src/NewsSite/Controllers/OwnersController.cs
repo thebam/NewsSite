@@ -10,22 +10,22 @@ using NewsSite.Models;
 
 namespace NewsSite.Controllers
 {
-    public class ArticlesController : Controller
+    public class OwnersController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public ArticlesController(ApplicationDbContext context)
+        public OwnersController(ApplicationDbContext context)
         {
             _context = context;    
         }
 
-        // GET: Articles
+        // GET: Owners
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Article.ToListAsync());
+            return View(await _context.Owner.ToListAsync());
         }
 
-        // GET: Articles/Details/5
+        // GET: Owners/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,40 +33,38 @@ namespace NewsSite.Controllers
                 return NotFound();
             }
 
-            var article = await _context.Article.SingleOrDefaultAsync(m => m.ArticleId == id);
-            if (article == null)
+            var owner = await _context.Owner.SingleOrDefaultAsync(m => m.OwnerId == id);
+            if (owner == null)
             {
                 return NotFound();
             }
 
-            return View(article);
+            return View(owner);
         }
 
-        // GET: Articles/Create
+        // GET: Owners/Create
         public IActionResult Create()
         {
-            List<Tag> tags = _context.Tag.ToList<Tag>();
-            ViewBag.tags = tags;
             return View();
         }
 
-        // POST: Articles/Create
+        // POST: Owners/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ArticleId,Body,DateCreated,DateModified,EndDate,OGDescription,OGImage,OGTitle,StartDate,Title,URL")] Article article)
+        public async Task<IActionResult> Create([Bind("OwnerId,Address,DateCreated,Email,Enabled,Name,Phone,SocialMedia,Website")] Owner owner)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(article);
+                _context.Add(owner);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-            return View(article);
+            return View(owner);
         }
 
-        // GET: Articles/Edit/5
+        // GET: Owners/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -74,22 +72,22 @@ namespace NewsSite.Controllers
                 return NotFound();
             }
 
-            var article = await _context.Article.SingleOrDefaultAsync(m => m.ArticleId == id);
-            if (article == null)
+            var owner = await _context.Owner.SingleOrDefaultAsync(m => m.OwnerId == id);
+            if (owner == null)
             {
                 return NotFound();
             }
-            return View(article);
+            return View(owner);
         }
 
-        // POST: Articles/Edit/5
+        // POST: Owners/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ArticleId,Body,DateCreated,DateModified,EndDate,OGDescription,OGImage,OGTitle,StartDate,Title,URL")] Article article)
+        public async Task<IActionResult> Edit(int id, [Bind("OwnerId,Address,DateCreated,Email,Enabled,Name,Phone,SocialMedia,Website")] Owner owner)
         {
-            if (id != article.ArticleId)
+            if (id != owner.OwnerId)
             {
                 return NotFound();
             }
@@ -98,12 +96,12 @@ namespace NewsSite.Controllers
             {
                 try
                 {
-                    _context.Update(article);
+                    _context.Update(owner);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ArticleExists(article.ArticleId))
+                    if (!OwnerExists(owner.OwnerId))
                     {
                         return NotFound();
                     }
@@ -114,10 +112,10 @@ namespace NewsSite.Controllers
                 }
                 return RedirectToAction("Index");
             }
-            return View(article);
+            return View(owner);
         }
 
-        // GET: Articles/Delete/5
+        // GET: Owners/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -125,29 +123,29 @@ namespace NewsSite.Controllers
                 return NotFound();
             }
 
-            var article = await _context.Article.SingleOrDefaultAsync(m => m.ArticleId == id);
-            if (article == null)
+            var owner = await _context.Owner.SingleOrDefaultAsync(m => m.OwnerId == id);
+            if (owner == null)
             {
                 return NotFound();
             }
 
-            return View(article);
+            return View(owner);
         }
 
-        // POST: Articles/Delete/5
+        // POST: Owners/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var article = await _context.Article.SingleOrDefaultAsync(m => m.ArticleId == id);
-            _context.Article.Remove(article);
+            var owner = await _context.Owner.SingleOrDefaultAsync(m => m.OwnerId == id);
+            _context.Owner.Remove(owner);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }
 
-        private bool ArticleExists(int id)
+        private bool OwnerExists(int id)
         {
-            return _context.Article.Any(e => e.ArticleId == id);
+            return _context.Owner.Any(e => e.OwnerId == id);
         }
     }
 }

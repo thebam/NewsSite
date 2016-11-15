@@ -10,63 +10,55 @@ using NewsSite.Models;
 
 namespace NewsSite.Controllers
 {
-    public class ArticlesController : Controller
+    public class TagsController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public ArticlesController(ApplicationDbContext context)
+        public TagsController(ApplicationDbContext context)
         {
             _context = context;    
         }
 
-        // GET: Articles
+        // GET: Tags
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Article.ToListAsync());
+            return View(await _context.Tag.ToListAsync());
         }
 
-        // GET: Articles/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+        
 
-            var article = await _context.Article.SingleOrDefaultAsync(m => m.ArticleId == id);
-            if (article == null)
-            {
-                return NotFound();
-            }
-
-            return View(article);
-        }
-
-        // GET: Articles/Create
+        // GET: Tags/Create
         public IActionResult Create()
         {
-            List<Tag> tags = _context.Tag.ToList<Tag>();
-            ViewBag.tags = tags;
             return View();
         }
 
-        // POST: Articles/Create
+        // POST: Tags/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ArticleId,Body,DateCreated,DateModified,EndDate,OGDescription,OGImage,OGTitle,StartDate,Title,URL")] Article article)
+        public async Task<IActionResult> Create([Bind("TagId,DateCreated,Enabled,TagName")] Tag tag)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(article);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Index");
+                Tag tempTag = _context.Tag.SingleOrDefault(t => t.TagName.ToLower().Trim() == tag.TagName.ToLower().Trim());
+                if (tempTag == null)
+                {
+                    tag.DateCreated = DateTime.Now;
+                    tag.Enabled = true;
+                    _context.Add(tag);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction("Index");
+                }
+                else {
+                    return RedirectToAction("Index");
+                }
             }
-            return View(article);
+            return View(tag);
         }
 
-        // GET: Articles/Edit/5
+        // GET: Tags/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -74,22 +66,22 @@ namespace NewsSite.Controllers
                 return NotFound();
             }
 
-            var article = await _context.Article.SingleOrDefaultAsync(m => m.ArticleId == id);
-            if (article == null)
+            var tag = await _context.Tag.SingleOrDefaultAsync(m => m.TagId == id);
+            if (tag == null)
             {
                 return NotFound();
             }
-            return View(article);
+            return View(tag);
         }
 
-        // POST: Articles/Edit/5
+        // POST: Tags/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ArticleId,Body,DateCreated,DateModified,EndDate,OGDescription,OGImage,OGTitle,StartDate,Title,URL")] Article article)
+        public async Task<IActionResult> Edit(int id, [Bind("TagId,DateCreated,Enabled,TagName")] Tag tag)
         {
-            if (id != article.ArticleId)
+            if (id != tag.TagId)
             {
                 return NotFound();
             }
@@ -98,12 +90,12 @@ namespace NewsSite.Controllers
             {
                 try
                 {
-                    _context.Update(article);
+                    _context.Update(tag);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ArticleExists(article.ArticleId))
+                    if (!TagExists(tag.TagId))
                     {
                         return NotFound();
                     }
@@ -114,10 +106,10 @@ namespace NewsSite.Controllers
                 }
                 return RedirectToAction("Index");
             }
-            return View(article);
+            return View(tag);
         }
 
-        // GET: Articles/Delete/5
+        // GET: Tags/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -125,29 +117,29 @@ namespace NewsSite.Controllers
                 return NotFound();
             }
 
-            var article = await _context.Article.SingleOrDefaultAsync(m => m.ArticleId == id);
-            if (article == null)
+            var tag = await _context.Tag.SingleOrDefaultAsync(m => m.TagId == id);
+            if (tag == null)
             {
                 return NotFound();
             }
 
-            return View(article);
+            return View(tag);
         }
 
-        // POST: Articles/Delete/5
+        // POST: Tags/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var article = await _context.Article.SingleOrDefaultAsync(m => m.ArticleId == id);
-            _context.Article.Remove(article);
+            var tag = await _context.Tag.SingleOrDefaultAsync(m => m.TagId == id);
+            _context.Tag.Remove(tag);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }
 
-        private bool ArticleExists(int id)
+        private bool TagExists(int id)
         {
-            return _context.Article.Any(e => e.ArticleId == id);
+            return _context.Tag.Any(e => e.TagId == id);
         }
     }
 }
