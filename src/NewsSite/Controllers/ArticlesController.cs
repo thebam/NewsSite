@@ -46,7 +46,11 @@ namespace NewsSite.Controllers
         public IActionResult Create()
         {
             List<Tag> tags = _context.Tag.ToList<Tag>();
+            List<Owner> owners = _context.Owner.ToList<Owner>();
+            List<MediaKitFile> mediaFiles = _context.MediaKitFile.ToList<MediaKitFile>();
             ViewBag.tags = tags;
+            ViewBag.owners = owners;
+            ViewBag.mediaFiles = mediaFiles;
             return View();
         }
 
@@ -55,12 +59,34 @@ namespace NewsSite.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ArticleId,Body,DateCreated,DateModified,EndDate,OGDescription,OGImage,OGTitle,StartDate,Title,URL")] Article article)
+        public async Task<IActionResult> Create(Article article)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(article);
+                article.DateCreated = DateTime.Now;
+                article.DateModified = DateTime.Now;
+                _context.Article.Add(article);
                 await _context.SaveChangesAsync();
+                
+                List<ArticleTag> articleTags = new List<ArticleTag>();
+                string newArticleTags = Request.Form["ArticleTags"].ToString();
+
+                if (newArticleTags.Substring(0, 1) == ",") {
+                    newArticleTags = newArticleTags.Substring(1,newArticleTags.Length-1);
+                }
+
+                if (newArticleTags.Substring(newArticleTags.Length-1, 1) == ",")
+                {
+                    newArticleTags = newArticleTags.Substring(0, newArticleTags.Length-1);
+                }
+
+                string[] tags = newArticleTags.Split(',');
+
+                for (var x=0;x<tags.Length;x++) {
+                    _context.ArticleTag.Add(new ArticleTag() { ArticleId = article.ArticleId, TagId = Convert.ToInt32(tags[x]) });
+                }
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction("Index");
             }
             return View(article);

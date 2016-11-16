@@ -64,6 +64,37 @@ namespace NewsSite.Controllers
             return View(owner);
         }
 
+
+        [HttpPost]
+        public async Task<IActionResult> CreateAjax()
+        {
+            string message = "";
+            if (!String.IsNullOrEmpty(Request.Form["address"].ToString().Trim())) {
+                Owner tempOwner = new Owner();
+                string ownerName = Request.Form["name"].ToString().Trim();
+                tempOwner = _context.Owner.SingleOrDefault(o=>o.Name == ownerName);
+                if (tempOwner!=null) {
+                    Owner newOwner = new Owner();
+                    newOwner.Address = Request.Form["address"].ToString().Trim();
+                    newOwner.DateCreated = DateTime.Now;
+                    newOwner.Email = Request.Form["email"].ToString().Trim();
+                    newOwner.Enabled = true;
+                    newOwner.Name = ownerName;
+                    newOwner.Phone = Request.Form["phone"].ToString().Trim();
+                    newOwner.SocialMedia = Request.Form["socialMedia"].ToString().Trim();
+                    newOwner.Website = Request.Form["website"].ToString().Trim();
+                    _context.Owner.Add(newOwner);
+                    await _context.SaveChangesAsync();
+                    message = "test" + newOwner.OwnerId;
+                }
+            } else {
+                message = "error";
+            }
+            return Json(message);
+        }
+
+
+
         // GET: Owners/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {

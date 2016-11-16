@@ -8,8 +8,8 @@ using NewsSite.Data;
 namespace NewsSite.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20161116015140_Initial")]
-    partial class Initial
+    [Migration("20161116134931_FileUpload")]
+    partial class FileUpload
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace NewsSite.Migrations
 {
-    public partial class Initial : Migration
+    public partial class FileUpload : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

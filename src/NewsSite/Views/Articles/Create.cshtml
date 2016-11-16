@@ -3,8 +3,16 @@
 @{
     ViewData["Title"] = "Create";
 }
-
-<h2>Create</h2>
+<style>
+    #SelectedFiles img, #UnselectedFiles img {
+        width:50px;
+        cursor:pointer;
+    }
+    #SelectedFiles img:hover, #UnselectedFiles img:hover {
+        width:250px;
+    }
+</style>
+<h2>Create New Article</h2>
 
 <form asp-action="Create">
     <div class="form-horizontal">
@@ -31,17 +39,19 @@
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="ArticleTags" class="col-md-2 control-label"></label>
+            <label class="col-md-2 control-label">Tags</label>
             <div class="col-md-10">
-                <input asp-for="ArticleTags" class="form-control" />
-                <span asp-validation-for="ArticleTags" class="text-danger" />
-                <div id="UnselectedTags">
+                <input asp-for="ArticleTags" class="form-control" value="," />
+                
+                <div id="SelectedTags">
+                    <h5>SELECTED TAGS</h5>
+                </div>
+                <div id="UnselectedTags" style="border:solid 1px;padding:15px;border-radius:5px;margin-top:15px;">
+                    <h5>AVAILABLE TAGS</h5>
                     @foreach (var tag in ViewBag.tags)
                     {
                         <div class="btn btn-default tag-btn" data-tag="@tag.TagId">@tag.TagName</div>
                     }
-                </div>
-                <div id="SelectedTags">
                 </div>
             </div>
         </div>
@@ -82,32 +92,170 @@
                 <span asp-validation-for="OGImage" class="text-danger" />
             </div>
         </div>
-        
-        
-        <hr />
-        <h3>Media Kit</h3>
-        
-        <div class="form-group">
-            
-            Show selected files as divs(onclick remove)
-            Dropdown of all files<br />
-            Textbox to add new file
-        </div>
-        <div>
-            @using (Html.BeginForm("Index", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
-            {
-                <span>Select File:</span>
-                <input type="file" name="postedFile" />
-                <hr />
-                <input type="submit" value="Upload" />
-                <br />
-                <span style="color:green">@ViewBag.Message</span>
-            }
-        </div>
-
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>
+<form method="post" enctype="multipart/form-data">
+    <h2>Media Kit</h2>
+    
+    
+    <div class="form-group">
+        <label class="col-md-2 control-label">Media Files</label>
+        <div class="col-md-10">
+            <input type="text" id="ArticleMediaKitFiles" class="form-control" value="," />
+
+            <div id="SelectedFiles">
+                <h5>SELECTED FILES</h5>
+            </div>
+            <div id="UnselectedFiles" style="border:solid 1px;padding:15px;border-radius:5px;margin-top:15px;">
+                <h5>AVAILABLE FILES</h5>
+                @foreach (var mediaFile in ViewBag.mediaFiles)
+                {
+                    @if (mediaFile.MediaType.ToLower() == "image")
+                    {
+                        <img class="file-btn" data-tag="@mediaFile.MediaKitFileId" src="~/mediakit_files/@mediaFile.URL" />
+                    }
+                    else
+                    {
+                        <div class="btn btn-default file-btn" data-tag="@mediaFile.MediaKitFileId">@mediaFile.URL</div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+    <h3>Upload New File</h3>
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="col-md-2 control-label">File</label>
+            <div class="col-md-10">
+                <input type="file" id="files" multiple class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">Filename</label>
+            <div class="col-md-10">
+                <input type="text" id="url" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">Description</label>
+            <div class="col-md-10">
+                <textarea id="Description" class="form-control"></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">Media Type</label>
+            <div class="col-md-10">
+                <select id="MediaType" class="form-control">
+                    <option value="image">Image</option>
+                    <option value="word">Word Document</option>
+                    <option value="pdf">PDF</option>
+                    <option value="spreadsheet">Spreadsheet</option>
+                    <option value="ppt">Presentation</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">Owner</label>
+            <div class="col-md-10">
+                <input type="text" id="OwnerId" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">Tags</label>
+            <div class="col-md-10">
+                <input type="text" id="FileTags" class="form-control" value="," />
+
+                <div id="SelectedFileTags">
+                    <h5>SELECTED TAGS</h5>
+                </div>
+                <div id="UnselectedFileTags" style="border:solid 1px;padding:15px;border-radius:5px;margin-top:15px;">
+                    <h5>AVAILABLE TAGS</h5>
+                    @foreach (var tag in ViewBag.tags)
+                    {
+                        <div class="btn btn-default file-tag-btn" data-tag="@tag.TagId">@tag.TagName</div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="button" id="upload" value="Upload Selected Files" class="btn btn-default" />
+            </div>
+        </div>
+        </div>
+</form>
+
+
+<form method="post">
+    <h3>Media File Owner</h3>
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="col-md-2 control-label">Owners</label>
+            <div class="col-md-10">
+                <select id="OwnerId" class="form-control">
+                    @foreach (var owner in ViewBag.owners)
+                    {
+                        <option value="@owner.OwnerId">@owner.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+
+
+
+        <div class="form-group">
+            <label class="col-md-2 control-label">Name</label>
+            <div class="col-md-10">
+                <input type="text" id="ownerName" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">Address</label>
+            <div class="col-md-10">
+                <input type="text" id="address" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">Email</label>
+            <div class="col-md-10">
+                <input type="email" id="email" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">Phone</label>
+            <div class="col-md-10">
+                <input type="tel" id="phone" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">Social Media</label>
+            <div class="col-md-10">
+                <input type="text" id="socialMedia" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">Website</label>
+            <div class="col-md-10">
+                <input type="text" id="website" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="button" id="addOwner" value="Add Owner" class="btn btn-default" />
             </div>
         </div>
     </div>
@@ -123,9 +271,102 @@
 <script src="~/lib/jquery/dist/jquery.js"></script>
 <script>
     $(document).ready(function () {
-        $(".tag-btn").click(function () {
-            alert($(this).data('tag'));
-            $(this).remove().clone().appendTo('#SelectedTags');
+        $(document).on('click', '.tag-btn', function () {
+            processSelection(Number($(this).data('tag')),"ArticleTags",$(this), "SelectedTags", "UnselectedTags");
+        });
+        $(document).on('click', '.file-tag-btn', function () {
+            processSelection(Number($(this).data('tag')), "FileTags", $(this), "SelectedFileTags", "UnselectedFileTags");
+        });
+        $(document).on('click', '.file-btn', function () {
+            processSelection(Number($(this).data('tag')), "ArticleMediaKitFiles", $(this), "SelectedFiles", "UnselectedFiles");
+        });
+
+        $("#upload").click(function (evt) {
+            var fileUpload = $("#files").get(0);
+            var files = fileUpload.files;
+            var data = new FormData();
+            for (var i = 0; i < files.length ; i++) {
+                data.append(files[i].name, files[i]);
+            }
+            var description = $("#Description").val();
+            var mediaType = $("#MediaType").val();
+            var url = $("#url").val();
+            var ownerId = $("#OwnerId").val();
+            data.append("description",description);
+            data.append("mediaType", mediaType);
+            data.append("url", url);
+            data.append("ownerId", ownerId);
+
+            $.ajax({
+                type: "POST",
+                url: "/MediaKitFiles/UploadFilesAjax",
+                contentType: false,
+                processData: false,
+                data: data,
+                success: function (message) {
+                    alert(message);
+                },
+                error: function () {
+                    alert("There was error uploading files!");
+                }
+            });
+        });
+
+        $("#addOwner").click(function (evt) {
+            
+            var data = new FormData();
+            var ownerName = $("#ownerName").val();
+            var address = $("#address").val();
+            var email = $("#email").val();
+            var phone = $("#phone").val();
+            var social = $("#socialMedia").val();
+            var website = $("#website").val();
+
+            data.append("name", ownerName);
+            data.append("address", address);
+            data.append("email", email);
+            data.append("phone", phone);
+            data.append("socialMedia", social);
+            data.append("website", website);
+
+            $.ajax({
+                type: "POST",
+                url: "/Owners/CreateAjax",
+                contentType: false,
+                processData: false,
+                data: data,
+                success: function (message) {
+                    alert(message);
+                },
+                error: function () {
+                    alert("There was error uploading files!");
+                }
+            });
         });
     });
+
+    function processSelection(itemId, allValuesElement, clickedElement, selectedElements, unselectedElements) {
+        var allValues = $("#" + allValuesElement).val()
+        if (checkSelected(itemId, allValues)) {
+            allValues = allValues + itemId + ",";
+            $("#" + allValuesElement).val(allValues);
+            clickedElement.remove().clone().appendTo('#' + selectedElements);
+        } else {
+            allValues = allValues.replace(itemId + ",", "");
+
+            if (allValues.substr(0, 1) != ",") {
+                allValues = "," + allValues;
+            }
+            $("#" + allValuesElement).val(allValues);
+            clickedElement.remove().clone().appendTo('#' + unselectedElements);
+        }
+    }
+    function checkSelected(itemId, allItems) {
+        if (allItems.indexOf("," + itemId + ",") >= 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
 </script>
