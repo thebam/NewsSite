@@ -8,7 +8,7 @@ using NewsSite.Data;
 namespace NewsSite.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20161114174611_Initial")]
+    [Migration("20161116015140_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -279,6 +279,24 @@ namespace NewsSite.Migrations
                     b.ToTable("MediaKitFile");
                 });
 
+            modelBuilder.Entity("NewsSite.Models.MediaKitFileTag", b =>
+                {
+                    b.Property<int>("MediaKitFileTagId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("MediaKitFileId");
+
+                    b.Property<int>("TagId");
+
+                    b.HasKey("MediaKitFileTagId");
+
+                    b.HasIndex("MediaKitFileId");
+
+                    b.HasIndex("TagId");
+
+                    b.ToTable("MediaKitFileTag");
+                });
+
             modelBuilder.Entity("NewsSite.Models.Owner", b =>
                 {
                     b.Property<int>("OwnerId")
@@ -391,6 +409,19 @@ namespace NewsSite.Migrations
                     b.HasOne("NewsSite.Models.Owner", "Owner")
                         .WithMany()
                         .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("NewsSite.Models.MediaKitFileTag", b =>
+                {
+                    b.HasOne("NewsSite.Models.MediaKitFile")
+                        .WithMany("MediaKitFileTags")
+                        .HasForeignKey("MediaKitFileId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("NewsSite.Models.Tag")
+                        .WithMany("MediaKitFileTags")
+                        .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
         }

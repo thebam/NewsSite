@@ -283,6 +283,32 @@ namespace NewsSite.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "MediaKitFileTag",
+                columns: table => new
+                {
+                    MediaKitFileTagId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    MediaKitFileId = table.Column<int>(nullable: false),
+                    TagId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MediaKitFileTag", x => x.MediaKitFileTagId);
+                    table.ForeignKey(
+                        name: "FK_MediaKitFileTag_MediaKitFile_MediaKitFileId",
+                        column: x => x.MediaKitFileId,
+                        principalTable: "MediaKitFile",
+                        principalColumn: "MediaKitFileId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MediaKitFileTag_Tag_TagId",
+                        column: x => x.TagId,
+                        principalTable: "Tag",
+                        principalColumn: "TagId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
                 table: "AspNetRoles",
@@ -348,6 +374,16 @@ namespace NewsSite.Migrations
                 name: "IX_MediaKitFile_OwnerId",
                 table: "MediaKitFile",
                 column: "OwnerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MediaKitFileTag_MediaKitFileId",
+                table: "MediaKitFileTag",
+                column: "MediaKitFileId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MediaKitFileTag_TagId",
+                table: "MediaKitFileTag",
+                column: "TagId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -374,16 +410,19 @@ namespace NewsSite.Migrations
                 name: "ArticleTag");
 
             migrationBuilder.DropTable(
+                name: "MediaKitFileTag");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "MediaKitFile");
+                name: "Article");
 
             migrationBuilder.DropTable(
-                name: "Article");
+                name: "MediaKitFile");
 
             migrationBuilder.DropTable(
                 name: "Tag");

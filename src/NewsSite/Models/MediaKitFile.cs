@@ -9,6 +9,7 @@ namespace NewsSite.Models
         public MediaKitFile() {
             this.Enabled = true;
             this.ArticleMediaKitFiles = new HashSet<ArticleMediaKitFile>();
+            this.MediaKitFileTags = new HashSet<MediaKitFileTag>();
         }
         public int MediaKitFileId { get; set; }
         [Required]
@@ -30,5 +31,6 @@ namespace NewsSite.Models
         public DateTime DateModified { get; set; }
         public bool Enabled { get; set; }
         public virtual ICollection<ArticleMediaKitFile> ArticleMediaKitFiles { get; set; }
+        public virtual ICollection<MediaKitFileTag> MediaKitFileTags { get; set; }
     }
 }

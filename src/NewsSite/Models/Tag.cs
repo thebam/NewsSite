@@ -9,6 +9,7 @@ namespace NewsSite.Models
         public Tag() {
             this.Enabled = true;
             this.ArticleTags = new HashSet<ArticleTag>();
+            this.MediaKitFileTags = new HashSet<MediaKitFileTag>();
         }
         public int TagId { get; set; }
         [Required]
@@ -20,5 +21,6 @@ namespace NewsSite.Models
         public DateTime DateCreated { get; set; }
         public bool Enabled { get; set; }
         public virtual ICollection<ArticleTag> ArticleTags { get; set; }
+        public virtual ICollection<MediaKitFileTag> MediaKitFileTags { get; set; }
     }
 }
