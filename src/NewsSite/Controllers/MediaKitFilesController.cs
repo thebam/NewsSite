@@ -175,7 +175,7 @@ namespace NewsSite.Controllers
                     fileExt = "."+fileParts[fileParts.Length-1];
                 }
 
-                filename = hostingEnv.WebRootPath + $@"\mediakit_files\{Request.Form["url"] + fileExt}";
+                filename = hostingEnv.WebRootPath + $@"\mediakitfiles\{Request.Form["url"] + fileExt}";
                 size += file.Length;
                 using (FileStream fs = System.IO.File.Create(filename))
                 {
