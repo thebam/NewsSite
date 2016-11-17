@@ -58,6 +58,26 @@ namespace NewsSite.Controllers
             return View(tag);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> CreateAjax()
+        {
+            string message = "";
+            string tagName = "";
+            tagName = (string)Request.Query["tagName"];
+                Tag tempTag = _context.Tag.SingleOrDefault(t => t.TagName.ToLower().Trim() == tagName.ToLower().Trim());
+                if (tempTag == null)
+                {
+                Tag tag = new Tag();
+                tag.TagName = tagName;
+                    tag.DateCreated = DateTime.Now;
+                    tag.Enabled = true;
+                    _context.Add(tag);
+                    await _context.SaveChangesAsync();
+                message = tag.TagId.ToString();
+                }
+            return Json(message);
+        }
+
         // GET: Tags/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
