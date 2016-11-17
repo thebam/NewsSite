@@ -274,7 +274,38 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+<script src='//cdn.tinymce.com/4/tinymce.min.js'></script>
 <script src="~/lib/jquery/dist/jquery.js"></script>
+<script>
+
+    var images;
+    $.ajax({
+        type: "GET",
+        url: "/MediaKitFiles/GetAllFiles",
+        contentType: false,
+        processData: false,
+        success: function (message) {
+            images = JSON.parse(message);
+        },
+        error: function () { alert("There was error uploading files!"); }
+    });
+
+    //var images = [
+    //     { title: 'My image 1', value: '/mediakitfiles/barb.jpg' },
+    //     { title: 'My image 2', value: 'http://www.moxiecode.com/my2.gif' }
+    //];
+
+  tinymce.init({
+      selector: '#Body',
+      plugins: [
+      'advlist autolink link image lists charmap print preview hr anchor pagebreak',
+      'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
+      'save contextmenu directionality template paste textcolor'
+      ],
+      toolbar: ['undo redo | styleselect | bold italic | image', 'alignleft aligncenter alignright'],
+      image_list: images
+  });
+</script>
 <script>
     $(document).ready(function () {
         $(document).on('click', '.tag-btn', function () {
@@ -288,13 +319,13 @@
         });
 
         $("#btnAddTag").click(function () {
-            addTag("newTag", "SelectedTags", "UnselectedTags", "ArticleTags");
+            addTag("newTag", "SelectedTags", "UnselectedTags", "ArticleTags","");
         });
         $("#btnAddFileTag").click(function () {
-            addTag("newFileTag", "SelectedFileTags", "UnselectedFileTags", "FileTags");
+            addTag("newFileTag", "SelectedFileTags", "UnselectedFileTags", "FileTags","file-");
         });
 
-        function addTag(newTagElement, selectedTagsElement, unselectedTagsElement, allTags) {
+        function addTag(newTagElement, selectedTagsElement, unselectedTagsElement, allTags,tagPrefix) {
 
             $.ajax({
                 type: "GET",
@@ -302,9 +333,10 @@
                 contentType: false,
                 processData: false,
                 success: function (message) {
-                    $("<div class=\"btn btn-sm btn-default tag-btn\" data-tag=\"" + message + "\">" + $("#" + newTagElement).val() + "</div>").appendTo(".availabletags");
+                    $("<div class=\"btn btn-sm btn-default tag-btn\" data-tag=\"" + message + "\">" + $("#" + newTagElement).val() + "</div>").appendTo("#UnselectedTags");
+                    $("<div class=\"btn btn-sm btn-default file-tag-btn\" data-tag=\"" + message + "\">" + $("#" + newTagElement).val() + "</div>").appendTo("#UnselectedFileTags");
                     $("#"+unselectedTagsElement).children().last().remove();
-                    $("<div class=\"btn btn-sm btn-default tag-btn\" data-tag=\"" + message + "\">" + $("#" + newTagElement).val() + "</div>").appendTo("#" + selectedTagsElement);
+                    $("<div class=\"btn btn-sm btn-default "+tagPrefix+"tag-btn\" data-tag=\"" + message + "\">" + $("#" + newTagElement).val() + "</div>").appendTo("#" + selectedTagsElement);
                     $("#" + newTagElement).val("");
                     $("#" + allTags).val($("#" + allTags).val() + message + ",");
                     
@@ -396,8 +428,6 @@
         }
     }
     function checkSelected(itemId, allItems) {
-        alert(allItems);
-        alert(itemId);
         if (allItems.indexOf("," + itemId + ",") >= 0) {
             return false;
         } else {

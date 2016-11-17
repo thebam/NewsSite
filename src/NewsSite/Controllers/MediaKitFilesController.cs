@@ -30,6 +30,19 @@ namespace NewsSite.Controllers
             var applicationDbContext = _context.MediaKitFile.Include(m => m.Owner);
             return View(await applicationDbContext.ToListAsync());
         }
+        [HttpGet]
+        public async Task<IActionResult> GetAllFiles()
+        {
+            List<ImageLibraryItem> library = new List<ImageLibraryItem>();
+            List<MediaKitFile> mediaFiles = _context.MediaKitFile.ToList();
+            foreach (MediaKitFile mediaFile in mediaFiles) {
+                library.Add(new ImageLibraryItem() {
+                    title = mediaFile.Description,
+                    value = mediaFile.URL
+                });
+            }
+            return Json(library);
+        }
 
         // GET: MediaKitFiles/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -188,7 +201,7 @@ namespace NewsSite.Controllers
             MediaKitFile tempKitFile = new MediaKitFile();
             tempKitFile = _context.MediaKitFile.SingleOrDefault(m => m.URL.ToLower() == convertedFilename);
             string message = "";
-            if (tempKitFile != null)
+            if (tempKitFile == null)
             {
                 MediaKitFile newKitFile = new MediaKitFile();
                 newKitFile.DateCreated = DateTime.Now;
@@ -204,5 +217,11 @@ namespace NewsSite.Controllers
             }
             return Json(message);
         }
+    }
+
+    public class ImageLibraryItem
+    {
+        public string title { get; set; }
+        public string value { get; set; }
     }
 }

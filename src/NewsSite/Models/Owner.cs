@@ -7,6 +7,7 @@ namespace NewsSite.Models
     {
         public Owner() {
             this.Enabled = true;
+            this.DateCreated = DateTime.Now;
         }
         public int OwnerId { get; set; }
         [Required]
