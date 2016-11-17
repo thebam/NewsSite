@@ -11,6 +11,8 @@
     #SelectedFiles img:hover, #UnselectedFiles img:hover {
         width:250px;
     }
+
+    
 </style>
 <h2>Create New Article</h2>
 
@@ -46,11 +48,11 @@
                 <div id="SelectedTags">
                     <h5>SELECTED TAGS</h5>
                 </div>
-                <div id="UnselectedTags" style="border:solid 1px;padding:15px;border-radius:5px;margin-top:15px;">
+                <div id="UnselectedTags" class="availabletags" style="border:solid 1px;padding:15px;border-radius:5px;margin-top:15px;">
                     <h5>AVAILABLE TAGS</h5>
                     @foreach (var tag in ViewBag.tags)
                     {
-                        <div class="btn btn-default tag-btn" data-tag="@tag.TagId">@tag.TagName</div>
+                        <div class="btn btn-sm btn-default tag-btn" data-tag="@tag.TagId">@tag.TagName</div>
                     }
                 </div>
                 <input type="text" id="newTag" class="form-control" />
@@ -183,11 +185,11 @@
                 <div id="SelectedFileTags">
                     <h5>SELECTED TAGS</h5>
                 </div>
-                <div id="UnselectedFileTags" style="border:solid 1px;padding:15px;border-radius:5px;margin-top:15px;">
+                <div id="UnselectedFileTags" class="availabletags" style="border:solid 1px;padding:15px;border-radius:5px;margin-top:15px;">
                     <h5>AVAILABLE TAGS</h5>
                     @foreach (var tag in ViewBag.tags)
                     {
-                        <div class="btn btn-default file-tag-btn" data-tag="@tag.TagId">@tag.TagName</div>
+                        <div class="btn btn-sm btn-default file-tag-btn" data-tag="@tag.TagId">@tag.TagName</div>
                     }
                 </div>
                 <input type="text" id="newFileTag" class="form-control" />
@@ -286,13 +288,13 @@
         });
 
         $("#btnAddTag").click(function () {
-            addTag("newTag", "SelectedTags", "ArticleTags");
+            addTag("newTag", "SelectedTags", "UnselectedTags", "ArticleTags");
         });
         $("#btnAddFileTag").click(function () {
-            addTag("newFileTag", "SelectedFileTags", "FileTags");
+            addTag("newFileTag", "SelectedFileTags", "UnselectedFileTags", "FileTags");
         });
 
-        function addTag(newTagElement, selectedTagsElement, allTags) {
+        function addTag(newTagElement, selectedTagsElement, unselectedTagsElement, allTags) {
 
             $.ajax({
                 type: "GET",
@@ -300,10 +302,12 @@
                 contentType: false,
                 processData: false,
                 success: function (message) {
-                    $("<div class=\"btn btn-default tag-btn\" data-tag=\"" + message + "\">" + $("#" + newTagElement).val() + "</div>").appendTo("#" + selectedTagsElement);
+                    $("<div class=\"btn btn-sm btn-default tag-btn\" data-tag=\"" + message + "\">" + $("#" + newTagElement).val() + "</div>").appendTo(".availabletags");
+                    $("#"+unselectedTagsElement).children().last().remove();
+                    $("<div class=\"btn btn-sm btn-default tag-btn\" data-tag=\"" + message + "\">" + $("#" + newTagElement).val() + "</div>").appendTo("#" + selectedTagsElement);
                     $("#" + newTagElement).val("");
                     $("#" + allTags).val($("#" + allTags).val() + message + ",");
-                    //TODO - add to other "available tags elements on page"
+                    
                 },
                 error: function () { alert("There was error uploading files!"); }
             });
@@ -376,7 +380,7 @@
     });
 
     function processSelection(itemId, allValuesElement, clickedElement, selectedElements, unselectedElements) {
-        var allValues = $("#" + allValuesElement).val()
+        var allValues = $("#" + allValuesElement).val();
         if (checkSelected(itemId, allValues)) {
             allValues = allValues + itemId + ",";
             $("#" + allValuesElement).val(allValues);
@@ -392,6 +396,8 @@
         }
     }
     function checkSelected(itemId, allItems) {
+        alert(allItems);
+        alert(itemId);
         if (allItems.indexOf("," + itemId + ",") >= 0) {
             return false;
         } else {
