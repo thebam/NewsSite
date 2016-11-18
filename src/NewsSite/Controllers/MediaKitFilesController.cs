@@ -197,25 +197,67 @@ namespace NewsSite.Controllers
                 }
                 convertedFilename = Request.Form["url"] + fileExt;
             }
-
+            MediaKitFile newKitFile = new MediaKitFile();
             MediaKitFile tempKitFile = new MediaKitFile();
             tempKitFile = _context.MediaKitFile.SingleOrDefault(m => m.URL.ToLower() == convertedFilename);
-            string message = "";
             if (tempKitFile == null)
             {
-                MediaKitFile newKitFile = new MediaKitFile();
+                Int32 ownerid = 0;
+                if (!string.IsNullOrEmpty(Request.Form["ownerId"]))
+                {
+                    ownerid = Convert.ToInt32(Request.Form["ownerId"]);
+                }
+                if (!string.IsNullOrEmpty(Request.Form["ownerName"])) {
+                    Owner newOwner = new Owner();
+                    newOwner.Name = Request.Form["ownerName"].ToString().Trim();
+                    newOwner.Address = Request.Form["address"].ToString().Trim();
+                    newOwner.Email = Request.Form["email"].ToString().Trim();
+                    newOwner.Phone = Request.Form["phone"].ToString().Trim();
+                    newOwner.SocialMedia = Request.Form["socialMedia"].ToString().Trim();
+                    newOwner.Website = Request.Form["website"].ToString().Trim();
+                    newOwner.DateCreated = DateTime.Now;
+                    
+                    _context.Add(newOwner);
+                    await _context.SaveChangesAsync();
+                    ownerid = newOwner.OwnerId;
+                }
+
                 newKitFile.DateCreated = DateTime.Now;
                 newKitFile.DateModified = DateTime.Now;
                 newKitFile.Description = Request.Form["description"];
                 newKitFile.Enabled = true;
                 newKitFile.MediaType = Request.Form["mediaType"];
                 newKitFile.URL = convertedFilename;
-                newKitFile.OwnerId = Convert.ToInt32(Request.Form["ownerId"]);
-                _context.MediaKitFile.Add(newKitFile);
-                message = $"{files.Count} file(s) / { size} bytes uploaded successfully!";
+                newKitFile.OwnerId = ownerid;
+                _context.Add(newKitFile);
                 await _context.SaveChangesAsync();
+
+
+                List<MediaKitFileTag> fileTags = new List<MediaKitFileTag>();
+                string newFileTags = Request.Form["FileTags"].ToString();
+
+                if (!string.IsNullOrEmpty(newFileTags)) {
+                    if (newFileTags.Substring(0, 1) == ",")
+                    {
+                        newFileTags = newFileTags.Substring(1, newFileTags.Length - 1);
+                    }
+
+                    if (newFileTags.Substring(newFileTags.Length - 1, 1) == ",")
+                    {
+                        newFileTags = newFileTags.Substring(0, newFileTags.Length - 1);
+                    }
+
+                    string[] tags = newFileTags.Split(',');
+
+                    for (var x = 0; x < tags.Length; x++)
+                    {
+                        _context.MediaKitFileTag.Add(new MediaKitFileTag() { MediaKitFileId = newKitFile.MediaKitFileId, TagId = Convert.ToInt32(tags[x]) });
+                    }
+                    await _context.SaveChangesAsync();
+                }
+
             }
-            return Json(message);
+            return Json(newKitFile);
         }
     }
 

@@ -9,10 +9,15 @@
         cursor:pointer;
     }
     #SelectedFiles img:hover, #UnselectedFiles img:hover {
-        width:250px;
+        width:125px;
     }
 
-    
+    .tagContainer {
+    border:solid 1px #ccc;
+    padding:15px;
+    border-radius:5px;
+    margin-top:15px;
+    }
 </style>
 <h2>Create New Article</h2>
 
@@ -41,44 +46,42 @@
             </div>
         </div>
         <div class="form-group">
+            <label asp-for="StartDate" class="col-md-2 control-label"></label>
+            <div class="col-md-4">
+                <input asp-for="StartDate" class="form-control" />
+                <span asp-validation-for="StartDate" class="text-danger" />
+            </div>
+        
+            <label asp-for="EndDate" class="col-md-2 control-label"></label>
+            <div class="col-md-4">
+                <input asp-for="EndDate" class="form-control" />
+                <span asp-validation-for="EndDate" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
             <label class="col-md-2 control-label">Tags</label>
             <div class="col-md-10">
                 <input type="hidden" asp-for="ArticleTags" class="form-control" value="," />
                 
-                <div id="SelectedTags" style="border:solid 1px;padding:15px;border-radius:5px;margin-top:15px;">
+                <div id="SelectedTags" class="tagContainer">
                     <h5>SELECTED TAGS</h5> <em>click on available tags below to add</em><br/>
                 </div>
-                <div id="UnselectedTags" class="availabletags" style="border:solid 1px;padding:15px;border-radius:5px;margin-top:15px;">
+                <div id="UnselectedTags" class="availabletags tagContainer" >
                     <h5>AVAILABLE TAGS</h5>
                     @foreach (var tag in ViewBag.tags)
                     {
                         <div class="btn btn-sm btn-default tag-btn" data-tag="@tag.TagId">@tag.TagName</div>
                     }
-                </div>
-                <div class="input-group">
-                    <input type="text" id="newTag" class="form-control" placeholder="Add New Tag" />
-                    <div class="input-group-btn">
-                        <div id="btnAddTag" class="btn btn-default">Add Tag</div>
+                    <div class="input-group" style="margin-top:15px;">
+                        <input type="text" id="newTag" class="form-control" placeholder="Add New Tag" />
+                        <div class="input-group-btn">
+                            <div id="btnAddTag" class="btn btn-default">Add</div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="form-group">
-            <label asp-for="StartDate" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="StartDate" class="form-control" />
-                <span asp-validation-for="StartDate" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="EndDate" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="EndDate" class="form-control" />
-                <span asp-validation-for="EndDate" class="text-danger" />
-            </div>
-        </div>
-        <hr />
-        <h3>Social Media Information</h3>
+        
         <div class="form-group">
             <label asp-for="OGTitle" class="col-md-2 control-label"></label>
             <div class="col-md-10">
@@ -96,180 +99,200 @@
         <div class="form-group">
             <label asp-for="OGImage" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="OGImage" class="form-control" />
-                <span asp-validation-for="OGImage" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
-            </div>
-        </div>
-    </div>
-</form>
-<form method="post" enctype="multipart/form-data">
-    <h2>Media Kit</h2>
-    
-    
-    <div class="form-group">
-        <label class="col-md-2 control-label">Media Files</label>
-        <div class="col-md-10">
-            <input type="text" id="ArticleMediaKitFiles" class="form-control" value="," />
-
-            <div id="SelectedFiles">
-                <h5>SELECTED FILES</h5>
-            </div>
-            <div id="UnselectedFiles" style="border:solid 1px;padding:15px;border-radius:5px;margin-top:15px;">
-                <h5>AVAILABLE FILES</h5>
-                @foreach (var mediaFile in ViewBag.mediaFiles)
-                {
-                    @if (mediaFile.MediaType.ToLower() == "image")
-                    {
-                        <img class="file-btn" data-tag="@mediaFile.MediaKitFileId" src="~/mediakitfiles/@mediaFile.URL" />
-                    }
-                    else
-                    {
-                        <div class="btn btn-default file-btn" data-tag="@mediaFile.MediaKitFileId">@mediaFile.URL</div>
-                    }
-                }
-            </div>
-        </div>
-    </div>
-
-
-
-
-
-
-
-
-    <h3>Upload New File</h3>
-    <div class="form-horizontal">
-        <div class="form-group">
-            <label class="col-md-2 control-label">File</label>
-            <div class="col-md-10">
-                <input type="file" id="files" multiple class="form-control" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-md-2 control-label">Filename</label>
-            <div class="col-md-10">
-                <input type="text" id="url" class="form-control" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-md-2 control-label">Description</label>
-            <div class="col-md-10">
-                <textarea id="Description" class="form-control"></textarea>
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-md-2 control-label">Media Type</label>
-            <div class="col-md-10">
-                <select id="MediaType" class="form-control">
-                    <option value="image">Image</option>
-                    <option value="word">Word Document</option>
-                    <option value="pdf">PDF</option>
-                    <option value="spreadsheet">Spreadsheet</option>
-                    <option value="ppt">Presentation</option>
-                </select>
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-md-2 control-label">Owner</label>
-            <div class="col-md-10">
-                <input type="text" id="OwnerId" class="form-control" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-md-2 control-label">Tags</label>
-            <div class="col-md-10">
-                <input type="text" id="FileTags" class="form-control" value="," />
-
-                <div id="SelectedFileTags">
-                    <h5>SELECTED TAGS</h5>
-                </div>
-                <div id="UnselectedFileTags" class="availabletags" style="border:solid 1px;padding:15px;border-radius:5px;margin-top:15px;">
-                    <h5>AVAILABLE TAGS</h5>
-                    @foreach (var tag in ViewBag.tags)
-                    {
-                        <div class="btn btn-sm btn-default file-tag-btn" data-tag="@tag.TagId">@tag.TagName</div>
-                    }
-                </div>
-                <input type="text" id="newFileTag" class="form-control" />
-                <div id="btnAddFileTag" class="btn btn-default">Add Tag</div>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="button" id="upload" value="Upload Selected Files" class="btn btn-default" />
-            </div>
-        </div>
-        </div>
-</form>
-
-
-<form method="post">
-    <h3>Media File Owner</h3>
-    <div class="form-horizontal">
-        <div class="form-group">
-            <label class="col-md-2 control-label">Owners</label>
-            <div class="col-md-10">
-                <select id="OwnerId" class="form-control">
+                <select asp-for="OGImage" class="form-control">
                     @foreach (var owner in ViewBag.owners)
                     {
                         <option value="@owner.OwnerId">@owner.Name</option>
                     }
                 </select>
+                <span asp-validation-for="OGImage" class="text-danger" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label">Media Kit Files</label>
+            <div class="col-md-10">
+                <input type="hidden" id="ArticleMediaKitFiles" class="form-control" value="," />
+
+                <div id="SelectedFiles" class="tagContainer">
+                    <h5>SELECTED FILES</h5> <em>click on available files below to add</em><br />
+                </div>
+                <div id="UnselectedFiles" class="tagContainer">
+                    <h5>AVAILABLE FILES</h5>
+                    @foreach (var mediaFile in ViewBag.mediaFiles)
+                    {
+                        @if (mediaFile.MediaType.ToLower() == "image")
+                        {
+                            <img class="file-btn" data-tag="@mediaFile.MediaKitFileId" src="~/mediakitfiles/@mediaFile.URL" />
+                        }
+                        else
+                        {
+                            <div class="btn btn-default file-btn" data-tag="@mediaFile.MediaKitFileId">@mediaFile.URL</div>
+                        }
+                    }
+                    <br/>
+                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#fileModal" style="margin-top:15px;">
+                        Upload New File
+                    </button>
+
+                </div>
             </div>
         </div>
 
 
 
 
-        <div class="form-group">
-            <label class="col-md-2 control-label">Name</label>
-            <div class="col-md-10">
-                <input type="text" id="ownerName" class="form-control" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-md-2 control-label">Address</label>
-            <div class="col-md-10">
-                <input type="text" id="address" class="form-control" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-md-2 control-label">Email</label>
-            <div class="col-md-10">
-                <input type="email" id="email" class="form-control" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-md-2 control-label">Phone</label>
-            <div class="col-md-10">
-                <input type="tel" id="phone" class="form-control" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-md-2 control-label">Social Media</label>
-            <div class="col-md-10">
-                <input type="text" id="socialMedia" class="form-control" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-md-2 control-label">Website</label>
-            <div class="col-md-10">
-                <input type="text" id="website" class="form-control" />
-            </div>
-        </div>
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="button" id="addOwner" value="Add Owner" class="btn btn-default" />
+                <input type="submit" value="Create New Article" class="btn btn-lg btn-success" />
             </div>
         </div>
     </div>
 </form>
+
+
+
+
+<div class="modal fade" tabindex="-1" role="dialog" id="fileModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Media Kit Files</h4>
+            </div>
+            <div class="modal-body">
+                <form method="post" enctype="multipart/form-data">
+                    <h3>Upload New File</h3>
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">File</label>
+                            <div class="col-md-10">
+                                <input type="file" id="files" multiple class="form-control" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">Filename</label>
+                            <div class="col-md-10">
+                                <input type="text" id="url" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">Description</label>
+                            <div class="col-md-10">
+                                <textarea id="Description" class="form-control"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">File Type</label>
+                            <div class="col-md-10">
+                                <select id="MediaType" class="form-control">
+                                    <option value="image">Image</option>
+                                    <option value="word">Word Document</option>
+                                    <option value="pdf">PDF</option>
+                                    <option value="spreadsheet">Spreadsheet</option>
+                                    <option value="ppt">Presentation</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">Author</label>
+                            <div class="col-md-10">
+                                <select id="OwnerId" class="form-control">
+                                    @foreach (var owner in ViewBag.owners)
+                                    {
+                                        <option value="@owner.OwnerId">@owner.Name</option>
+                                    }
+                                </select>
+                                <br/>
+                                <div id="openNewOwner" class="btn btn-default">Add New Owner</div>
+
+
+
+                                <div id="newOwner" style="display:none;">
+                                    <div class="form-group">
+                                        <label class="col-md-2 control-label">Name</label>
+                                        <div class="col-md-10">
+                                            <input type="text" id="ownerName" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-2 control-label">Address</label>
+                                        <div class="col-md-10">
+                                            <input type="text" id="address" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-2 control-label">Email</label>
+                                        <div class="col-md-10">
+                                            <input type="email" id="email" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-2 control-label">Phone</label>
+                                        <div class="col-md-10">
+                                            <input type="tel" id="phone" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-2 control-label">Social Media</label>
+                                        <div class="col-md-10">
+                                            <input type="text" id="socialMedia" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-2 control-label">Website</label>
+                                        <div class="col-md-10">
+                                            <input type="text" id="website" class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+
+
+                        
+
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">Tags</label>
+                            <div class="col-md-10">
+                                <input type="hidden" id="FileTags" class="form-control" value="," />
+
+                                <div id="SelectedFileTags"  class="tagContainer">
+                                    <h5>SELECTED TAGS</h5> <em>click on available tags below to add</em><br />
+                                </div>
+                                <div id="UnselectedFileTags" class="availabletags" style="border:solid 1px #ccc;padding:15px;border-radius:5px;margin-top:15px;">
+                                    <h5>AVAILABLE TAGS</h5>
+                                    @foreach (var tag in ViewBag.tags)
+                                    {
+                                        <div class="btn btn-sm btn-default file-tag-btn" data-tag="@tag.TagId">@tag.TagName</div>
+                                    }
+                                    <div class="input-group" style="margin-top:15px;">
+                                        <input type="text" id="newFileTag" class="form-control" placeholder="Add New Tag" />
+                                        <div class="input-group-btn">
+                                            <div id="btnAddFileTag" class="btn btn-default">Add</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-10">
+                                <input type="button" id="upload" value="Upload Files" class="btn btn-default" />
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
 
 <div>
     <a asp-action="Index">Back to List</a>
@@ -281,15 +304,15 @@
 <script src='//cdn.tinymce.com/4/tinymce.min.js'></script>
 <script src="~/lib/jquery/dist/jquery.js"></script>
 <script>
-
     
+    var images = {};
     $.ajax({
         type: "GET",
         url: "/MediaKitFiles/GetAllFiles",
         contentType: false,
         processData: false,
         success: function (message) {
-            var images = {};
+            
             images = message;
             tinymce.init({
                 selector: '#Body',
@@ -302,6 +325,17 @@
                 toolbar: ['undo redo | styleselect | bold italic | image', 'alignleft aligncenter alignright'],
                 image_list: images
             });
+
+
+            
+            var mySelect = $('#OGImage');
+            $.each(images, function (val, text) {
+                mySelect.append(
+                    $('<option></option>').val(text.value).html(text.title)
+                );
+            });
+
+
         },
         error: function () { alert("There was error uploading files!"); }
     });
@@ -318,6 +352,12 @@
         });
         $(document).on('click', '.file-btn', function () {
             processSelection(Number($(this).data('tag')), "ArticleMediaKitFiles", $(this), "SelectedFiles", "UnselectedFiles");
+        });
+
+        $("#openNewOwner").click(function () {
+            $("#newOwner").show();
+            $("#openNewOwner").hide();
+            $("#OwnerId").hide();
         });
 
         $("#btnAddTag").click(function () {
@@ -341,7 +381,7 @@
                     $("<div class=\"btn btn-sm btn-default "+tagPrefix+"tag-btn\" data-tag=\"" + message + "\">" + $("#" + newTagElement).val() + "</div>").appendTo("#" + selectedTagsElement);
                     $("#" + newTagElement).val("");
                     $("#" + allTags).val($("#" + allTags).val() + message + ",");
-                    
+
                 },
                 error: function () { alert("There was error uploading files!"); }
             });
@@ -359,20 +399,66 @@
             var mediaType = $("#MediaType").val();
             var url = $("#url").val();
             var ownerId = $("#OwnerId").val();
+            var fileTags = $("#FileTags").val();
+
+            var ownerName = $("#ownerName").val();
+            var address = $("#address").val();
+            var email = $("#email").val();
+            var phone = $("#phone").val();
+            var socialMedia = $("#socialMedia").val();
+            var website = $("#website").val();
+
+
+
+
+
+
             data.append("description",description);
             data.append("mediaType", mediaType);
             data.append("url", url);
             data.append("ownerId", ownerId);
+            data.append("FileTags", fileTags);
 
+            data.append("ownerName", ownerName);
+            data.append("address", address);
+            data.append("email", email);
+            data.append("phone", phone);
+            data.append("socialMedia", socialMedia);
+            data.append("website", website);
+
+            
             $.ajax({
                 type: "POST",
                 url: "/MediaKitFiles/UploadFilesAjax",
                 contentType: false,
                 processData: false,
+                dataType:"json",
                 data: data,
                 success: function (message) {
-                    
-                    alert(message);
+                    var temp = JSON.stringify(message);
+                    var responseData = JSON.parse(temp);
+                    $("#fileModal").modal('hide');
+                    $("<img class=\"file-btn\" data-tag=\"" + responseData["mediaKitFileId"] + "\" src=\"/mediakitfiles/" + responseData["url"] + "\" />").appendTo("#SelectedFiles");
+                    $("#ArticleMediaKitFiles").val($("#ArticleMediaKitFiles").val() + responseData["mediaKitFileId"] + ",");
+
+                    $("#files").val("");
+                    $("#Description").val("");
+                    $("#MediaType").val("");
+                    $("#url").val("");
+                    $("#OwnerId").val("");
+                    $("#FileTags").val("");
+
+                    $("#ownerName").val("");
+                    $("#address").val("");
+                    $("#email").val("");
+                    $("#phone").val("");
+                    $("#socialMedia").val("");
+                    $("#website").val("");
+
+                    $("#newOwner").hide();
+                    $("#openNewOwner").show();
+                    $("#OwnerId").show();
+
                 },
                 error: function () {
                     alert("There was error uploading files!");
@@ -426,7 +512,7 @@
                 allValues = "," + allValues;
             }
             $("#" + allValuesElement).val(allValues);
-            clickedElement.remove().clone().appendTo('#' + unselectedElements);
+            clickedElement.remove().clone().prependTo('#' + unselectedElements);
         }
     }
     function checkSelected(itemId, allItems) {

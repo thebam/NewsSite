@@ -16,6 +16,7 @@ namespace NewsSite.Models
         public string Title { get; set; }
         [Required]
         [MaxLength(256, ErrorMessage = "URL must be 256 characters or less.")]
+        [Display(Name = "Custom URL")]
         public string URL { get; set; }
         [Required]
         public string Body { get; set; }
@@ -28,15 +29,15 @@ namespace NewsSite.Models
         [MaxLength(140, ErrorMessage = "Open Graph Description must be 140 characters or less.")]
         public string OGDescription { get; set; }
         [Required]
-        [Display(Name ="Social Media Image")]
+        [Display(Name = "Social Media Image")]
         public string OGImage { get; set; }
         [Required]
-        [Display(Name ="Date Created")]
-        [DisplayFormat(DataFormatString = "0:MM/dd/yyyy h:mm tt")]
+        [Display(Name = "Date Created")]
+        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy h:mm tt}")]
         public DateTime DateCreated { get; set; }
         [Required]
         [Display(Name ="Last Modified")]
-        [DisplayFormat(DataFormatString = "0:MM/dd/yyyy h:mm tt")]
+        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy h:mm tt}")]
         public DateTime DateModified { get; set; }
         [Required]
         [Display(Name ="Start Date")]

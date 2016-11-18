@@ -29,5 +29,7 @@ namespace NewsSite.Data
         public DbSet<Owner> Owner { get; set; }
         public DbSet<ArticleMediaKitFile> ArticleMediaKitFile { get; set; }
         public DbSet<ArticleTag> ArticleTag { get; set; }
+
+        public DbSet<MediaKitFileTag> MediaKitFileTag { get; set; }
     }
 }

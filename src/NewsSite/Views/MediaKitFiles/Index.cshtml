@@ -4,7 +4,7 @@
     ViewData["Title"] = "Index";
 }
 
-<h2>Index</h2>
+<h2>Media Kit Files</h2>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -13,26 +13,26 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.DateCreated)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DateModified)
+                @Html.DisplayNameFor(model => model.URL)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Description)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Enabled)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.MediaType)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ThumbnailURL)
+                @Html.DisplayNameFor(model => model.DateCreated)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.URL)
+                @Html.DisplayNameFor(model => model.DateModified)
             </th>
+            
+            <th>
+                @Html.DisplayNameFor(model => model.Owner.Name)
+            </th>
+            
+            
             <th></th>
         </tr>
     </thead>
@@ -40,29 +40,25 @@
 @foreach (var item in Model) {
         <tr>
             <td>
+                @Html.DisplayFor(modelItem => item.URL)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MediaType)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.DateCreated)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.DateModified)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Enabled)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MediaType)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ThumbnailURL)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.URL)
+                @Html.DisplayFor(modelItem => item.Owner.Name)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.MediaKitFileId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.MediaKitFileId">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.MediaKitFileId">Delete</a>
             </td>
         </tr>

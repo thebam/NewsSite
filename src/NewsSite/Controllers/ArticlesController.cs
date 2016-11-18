@@ -46,8 +46,8 @@ namespace NewsSite.Controllers
         public IActionResult Create()
         {
             List<Tag> tags = _context.Tag.ToList<Tag>();
-            List<Owner> owners = _context.Owner.ToList<Owner>();
-            List<MediaKitFile> mediaFiles = _context.MediaKitFile.ToList<MediaKitFile>();
+            List<Owner> owners = _context.Owner.OrderByDescending(o=>o.Name).ToList<Owner>();
+            List<MediaKitFile> mediaFiles = _context.MediaKitFile.OrderByDescending(m=>m.URL).ToList<MediaKitFile>();
             ViewBag.tags = tags;
             ViewBag.owners = owners;
             ViewBag.mediaFiles = mediaFiles;

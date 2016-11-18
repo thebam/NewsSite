@@ -23,11 +23,11 @@ namespace NewsSite.Models
         public string MediaType { get; set; }
         [Required]
         [Display(Name = "Date Created")]
-        [DisplayFormat(DataFormatString = "0:MM/dd/yyyy h:mm t")]
+        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy h:mm tt}")]
         public DateTime DateCreated { get; set; }
         [Required]
         [Display(Name = "Last Modified")]
-        [DisplayFormat(DataFormatString = "0:MM/dd/yyyy h:mm t")]
+        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy h:mm tt}")]
         public DateTime DateModified { get; set; }
         public bool Enabled { get; set; }
         public virtual ICollection<ArticleMediaKitFile> ArticleMediaKitFiles { get; set; }
