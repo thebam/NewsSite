@@ -38,7 +38,7 @@ namespace NewsSite.Controllers
             foreach (MediaKitFile mediaFile in mediaFiles) {
                 library.Add(new ImageLibraryItem() {
                     title = mediaFile.Description,
-                    value = mediaFile.URL
+                    value = "/mediakitfiles/"+mediaFile.URL
                 });
             }
             return Json(library);

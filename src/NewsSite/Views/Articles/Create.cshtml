@@ -43,10 +43,10 @@
         <div class="form-group">
             <label class="col-md-2 control-label">Tags</label>
             <div class="col-md-10">
-                <input type="text" asp-for="ArticleTags" class="form-control" value="," />
+                <input type="hidden" asp-for="ArticleTags" class="form-control" value="," />
                 
-                <div id="SelectedTags">
-                    <h5>SELECTED TAGS</h5>
+                <div id="SelectedTags" style="border:solid 1px;padding:15px;border-radius:5px;margin-top:15px;">
+                    <h5>SELECTED TAGS</h5> <em>click on available tags below to add</em><br/>
                 </div>
                 <div id="UnselectedTags" class="availabletags" style="border:solid 1px;padding:15px;border-radius:5px;margin-top:15px;">
                     <h5>AVAILABLE TAGS</h5>
@@ -55,8 +55,12 @@
                         <div class="btn btn-sm btn-default tag-btn" data-tag="@tag.TagId">@tag.TagName</div>
                     }
                 </div>
-                <input type="text" id="newTag" class="form-control" />
-                <div id="btnAddTag" class="btn btn-default">Add Tag</div>
+                <div class="input-group">
+                    <input type="text" id="newTag" class="form-control" placeholder="Add New Tag" />
+                    <div class="input-group-btn">
+                        <div id="btnAddTag" class="btn btn-default">Add Tag</div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="form-group">
@@ -278,33 +282,31 @@
 <script src="~/lib/jquery/dist/jquery.js"></script>
 <script>
 
-    var images;
+    
     $.ajax({
         type: "GET",
         url: "/MediaKitFiles/GetAllFiles",
         contentType: false,
         processData: false,
         success: function (message) {
-            images = JSON.parse(message);
+            var images = {};
+            images = message;
+            tinymce.init({
+                selector: '#Body',
+                height:"300",
+                plugins: [
+                'advlist autolink link image lists charmap print preview hr anchor pagebreak',
+                'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
+                'save contextmenu directionality template paste textcolor'
+                ],
+                toolbar: ['undo redo | styleselect | bold italic | image', 'alignleft aligncenter alignright'],
+                image_list: images
+            });
         },
         error: function () { alert("There was error uploading files!"); }
     });
 
-    //var images = [
-    //     { title: 'My image 1', value: '/mediakitfiles/barb.jpg' },
-    //     { title: 'My image 2', value: 'http://www.moxiecode.com/my2.gif' }
-    //];
-
-  tinymce.init({
-      selector: '#Body',
-      plugins: [
-      'advlist autolink link image lists charmap print preview hr anchor pagebreak',
-      'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
-      'save contextmenu directionality template paste textcolor'
-      ],
-      toolbar: ['undo redo | styleselect | bold italic | image', 'alignleft aligncenter alignright'],
-      image_list: images
-  });
+  
 </script>
 <script>
     $(document).ready(function () {
