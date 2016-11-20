@@ -374,16 +374,22 @@
                 url: "/Tags/CreateAjax?tagName=" + $("#" + newTagElement).val(),
                 contentType: false,
                 processData: false,
-                success: function (message) {
-                    $("<div class=\"btn btn-sm btn-default tag-btn\" data-tag=\"" + message + "\">" + $("#" + newTagElement).val() + "</div>").appendTo("#UnselectedTags");
-                    $("<div class=\"btn btn-sm btn-default file-tag-btn\" data-tag=\"" + message + "\">" + $("#" + newTagElement).val() + "</div>").appendTo("#UnselectedFileTags");
-                    $("#"+unselectedTagsElement).children().last().remove();
-                    $("<div class=\"btn btn-sm btn-default "+tagPrefix+"tag-btn\" data-tag=\"" + message + "\">" + $("#" + newTagElement).val() + "</div>").appendTo("#" + selectedTagsElement);
-                    $("#" + newTagElement).val("");
-                    $("#" + allTags).val($("#" + allTags).val() + message + ",");
+                success: function (response) {
 
+                    var responseText = JSON.stringify(response);
+                    var responseData = JSON.parse(responseText);
+                    if (!responseData["status"]) {
+                        $("<div class=\"btn btn-sm btn-default tag-btn\" data-tag=\"" + responseData["id"] + "\">" + responseData["tag"] + "</div>").appendTo("#UnselectedTags");
+                        $("<div class=\"btn btn-sm btn-default file-tag-btn\" data-tag=\"" + responseData["id"] + "\">" + responseData["tag"] + "</div>").appendTo("#UnselectedFileTags");
+                        $("#" + unselectedTagsElement).children().last().remove();
+                        $("<div class=\"btn btn-sm btn-default " + tagPrefix + "tag-btn\" data-tag=\"" + responseData["id"] + "\">" + responseData["tag"] + "</div>").appendTo("#" + selectedTagsElement);
+                        $("#" + newTagElement).val("");
+                        $("#" + allTags).val($("#" + allTags).val() + responseData["id"] + ",");
+                    } else {
+                        alert(responseData["message"]);
+                    }
                 },
-                error: function () { alert("There was error uploading files!"); }
+                error: function (err) { alert("There was an error creating the tag."); }
             });
 
         }
@@ -426,7 +432,7 @@
             data.append("socialMedia", socialMedia);
             data.append("website", website);
 
-            
+
             $.ajax({
                 type: "POST",
                 url: "/MediaKitFiles/UploadFilesAjax",
@@ -438,7 +444,12 @@
                     var temp = JSON.stringify(message);
                     var responseData = JSON.parse(temp);
                     $("#fileModal").modal('hide');
-                    $("<img class=\"file-btn\" data-tag=\"" + responseData["mediaKitFileId"] + "\" src=\"/mediakitfiles/" + responseData["url"] + "\" />").appendTo("#SelectedFiles");
+                    if (responseData["mediaType"] == "image") {
+                        $("<img class=\"file-btn\" data-tag=\"" + responseData["mediaKitFileId"] + "\" src=\"/mediakitfiles/" + responseData["url"] + "\" />").appendTo("#SelectedFiles");
+                    } else {
+                        $("<div class=\"btn btn-default file-btn\" data-tag=\"" + responseData["mediaKitFileId"] + "\">" + responseData["url"] + "</div>").appendTo("#SelectedFiles");
+
+                    }
                     $("#ArticleMediaKitFiles").val($("#ArticleMediaKitFiles").val() + responseData["mediaKitFileId"] + ",");
 
                     $("#files").val("");

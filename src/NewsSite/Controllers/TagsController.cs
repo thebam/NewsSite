@@ -16,7 +16,7 @@ namespace NewsSite.Controllers
 
         public TagsController(ApplicationDbContext context)
         {
-            _context = context;    
+            _context = context;
         }
 
         // GET: Tags
@@ -25,7 +25,7 @@ namespace NewsSite.Controllers
             return View(await _context.Tag.ToListAsync());
         }
 
-        
+
 
         // GET: Tags/Create
         public IActionResult Create()
@@ -51,7 +51,8 @@ namespace NewsSite.Controllers
                     await _context.SaveChangesAsync();
                     return RedirectToAction("Index");
                 }
-                else {
+                else
+                {
                     return RedirectToAction("Index");
                 }
             }
@@ -61,21 +62,22 @@ namespace NewsSite.Controllers
         [HttpGet]
         public async Task<IActionResult> CreateAjax()
         {
-            string message = "";
             string tagName = "";
             tagName = (string)Request.Query["tagName"];
-                Tag tempTag = _context.Tag.SingleOrDefault(t => t.TagName.ToLower().Trim() == tagName.ToLower().Trim());
-                if (tempTag == null)
-                {
+            Tag tempTag = _context.Tag.SingleOrDefault(t => t.TagName.ToLower().Trim() == tagName.ToLower().Trim());
+            if (tempTag == null)
+            {
                 Tag tag = new Tag();
-                tag.TagName = tagName;
-                    tag.DateCreated = DateTime.Now;
-                    tag.Enabled = true;
-                    _context.Add(tag);
-                    await _context.SaveChangesAsync();
-                message = tag.TagId.ToString();
-                }
-            return Json(message);
+                tag.TagName = tagName.Trim();
+                tag.DateCreated = DateTime.Now;
+                tag.Enabled = true;
+                _context.Add(tag);
+                await _context.SaveChangesAsync();
+                return Json(new { id = tag.TagId, tag = tag.TagName});
+            }
+            else {
+                return Json(new { status = "error", message = "Tag already exists." });
+            }
         }
 
         // GET: Tags/Edit/5
