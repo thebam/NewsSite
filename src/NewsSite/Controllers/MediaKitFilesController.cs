@@ -205,7 +205,13 @@ namespace NewsSite.Controllers
                 Int32 ownerid = 0;
                 if (!string.IsNullOrEmpty(Request.Form["ownerId"]))
                 {
-                    ownerid = Convert.ToInt32(Request.Form["ownerId"]);
+                    try
+                    {
+                        ownerid = Convert.ToInt32(Request.Form["ownerId"]);
+                    }
+                    catch (Exception ex) {
+                        ownerid = 0;
+                    }
                 }
                 if (!string.IsNullOrEmpty(Request.Form["ownerName"])) {
                     Owner newOwner = new Owner();

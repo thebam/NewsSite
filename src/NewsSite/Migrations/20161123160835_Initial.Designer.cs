@@ -8,8 +8,8 @@ using NewsSite.Data;
 namespace NewsSite.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20161117141056_Init")]
-    partial class Init
+    [Migration("20161123160835_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
