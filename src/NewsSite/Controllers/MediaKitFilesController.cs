@@ -34,7 +34,7 @@ namespace NewsSite.Controllers
         public async Task<IActionResult> GetAllFiles()
         {
             List<ImageLibraryItem> library = new List<ImageLibraryItem>();
-            List<MediaKitFile> mediaFiles = _context.MediaKitFile.ToList();
+            List<MediaKitFile> mediaFiles = _context.MediaKitFile.Where(m => m.Enabled == true).ToList();
             foreach (MediaKitFile mediaFile in mediaFiles) {
                 library.Add(new ImageLibraryItem() {
                     title = mediaFile.Description,

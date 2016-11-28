@@ -45,9 +45,9 @@ namespace NewsSite.Controllers
         // GET: Articles/Create
         public IActionResult Create()
         {
-            List<Tag> tags = _context.Tag.ToList<Tag>();
-            List<Owner> owners = _context.Owner.OrderByDescending(o=>o.Name).ToList<Owner>();
-            List<MediaKitFile> mediaFiles = _context.MediaKitFile.OrderByDescending(m=>m.URL).ToList<MediaKitFile>();
+            List<Tag> tags = _context.Tag.Where(t=>t.Enabled == true).OrderByDescending(g => g.TagName).ToList<Tag>();
+            List<Owner> owners = _context.Owner.Where(o => o.Enabled == true).OrderByDescending(n=>n.Name).ToList<Owner>();
+            List<MediaKitFile> mediaFiles = _context.MediaKitFile.Where(m => m.Enabled == true).OrderByDescending(k=>k.URL).ToList<MediaKitFile>();
             ViewBag.tags = tags;
             ViewBag.owners = owners;
             ViewBag.mediaFiles = mediaFiles;

@@ -16,6 +16,9 @@
                 @Html.DisplayNameFor(model => model.TagName)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.Enabled)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.DateCreated)
             </th>
             <th></th>
@@ -26,6 +29,9 @@
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.TagName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Enabled)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.DateCreated)

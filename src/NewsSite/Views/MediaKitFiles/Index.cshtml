@@ -22,15 +22,17 @@
                 @Html.DisplayNameFor(model => model.MediaType)
             </th>
             <th>
+                Author
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Enabled)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.DateCreated)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DateModified)
-            </th>
             
-            <th>
-                @Html.DisplayNameFor(model => model.Owner.Name)
-            </th>
+            
+            
             
             
             <th></th>
@@ -49,14 +51,16 @@
                 @Html.DisplayFor(modelItem => item.MediaType)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.DateCreated)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateModified)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.Owner.Name)
             </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Enabled)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateCreated)
+            </td>
+            
+            
             <td>
                 <a asp-action="Edit" asp-route-id="@item.MediaKitFileId">Edit</a> |
                 <a asp-action="Delete" asp-route-id="@item.MediaKitFileId">Delete</a>
