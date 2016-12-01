@@ -42,6 +42,13 @@
             <label asp-for="Body" class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 <textarea asp-for="Body" class="form-control"></textarea>
+
+                <div class="alert alert-info" role="alert" style="margin-top:15px;">
+                    <p><strong>The following text will be automatically added to each article:</strong></p>
+                    <p><em>Established in 1890, Savannah State University is the oldest public historically black college or university in Georgia and the oldest institution of higher learning in the city of Savannah. The university's 4,900 students select majors from 27 undergraduate and five graduate programs in three colleges - Liberal Arts and Social Sciences, Business Administration and Sciences and Technology - and the School of Teacher Education.</em></p>
+                </div>
+
+                
                 <span asp-validation-for="Body" class="text-danger" />
             </div>
         </div>
@@ -100,9 +107,9 @@
             <label asp-for="OGImage" class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 <select asp-for="OGImage" class="form-control">
-                    @foreach (var owner in ViewBag.owners)
+                    @foreach (var mediaFile in ViewBag.mediaFiles)
                     {
-                        <option value="@owner.OwnerId">@owner.Name</option>
+                        <option value="@mediaFile.URL">@mediaFile.Description</option>
                     }
                 </select>
                 <span asp-validation-for="OGImage" class="text-danger" />
@@ -329,11 +336,7 @@
 
             
             var mySelect = $('#OGImage');
-            $.each(images, function (val, text) {
-                mySelect.append(
-                    $('<option></option>').val(text.value).html(text.title)
-                );
-            });
+            
 
 
         },
