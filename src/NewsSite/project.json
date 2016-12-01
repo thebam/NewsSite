@@ -19,7 +19,6 @@
     "Microsoft.AspNetCore.Server.IISIntegration": "1.0.0",
     "Microsoft.AspNetCore.Server.Kestrel": "1.0.1",
     "Microsoft.AspNetCore.StaticFiles": "1.0.0",
-    "Microsoft.EntityFrameworkCore.SqlServer": "1.0.1",
     "Microsoft.EntityFrameworkCore.SqlServer.Design": {
       "version": "1.0.1",
       "type": "build"
@@ -46,7 +45,8 @@
     },
     "xunit": "2.1.0",
     "Microsoft.EntityFrameworkCore.InMemory": "1.1.0",
-    "xunit.runner.visualstudio": "2.1.0"
+    "xunit.runner.visualstudio": "2.1.0",
+    "Microsoft.EntityFrameworkCore.SqlServer": "1.1.0"
   },
 
   "tools": {

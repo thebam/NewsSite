@@ -211,6 +211,7 @@ namespace NewsSite.Migrations
                 {
                     MediaKitFileId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    CopyrightDate = table.Column<DateTime>(nullable: false),
                     DateCreated = table.Column<DateTime>(nullable: false),
                     DateModified = table.Column<DateTime>(nullable: false),
                     Description = table.Column<string>(nullable: false),
@@ -333,11 +334,6 @@ namespace NewsSite.Migrations
                 name: "IX_AspNetUserRoles_RoleId",
                 table: "AspNetUserRoles",
                 column: "RoleId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AspNetUserRoles_UserId",
-                table: "AspNetUserRoles",
-                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",

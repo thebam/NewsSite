@@ -22,7 +22,7 @@ namespace NewsSite.Controllers
         // GET: Owners
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Owner.ToListAsync());
+            return View(await _context.Owner.OrderBy(o=>o.Name).ToListAsync());
         }
 
         // GET: Owners/Details/5
@@ -38,7 +38,11 @@ namespace NewsSite.Controllers
             {
                 return NotFound();
             }
-
+            List<MediaKitFile> mediaKitFiles = new List<MediaKitFile>();
+            List<Tag> tags = _context.Tag.Where(t => t.Enabled == true).OrderBy(g => g.TagName).ToList<Tag>();
+            mediaKitFiles = _context.MediaKitFile.Where(m => m.OwnerId.Equals(owner.OwnerId)).OrderBy(k=>k.Description).ToList<MediaKitFile>();
+            ViewBag.tags = tags;
+            ViewBag.mediaKitFiles = mediaKitFiles;
             return View(owner);
         }
 
@@ -57,8 +61,18 @@ namespace NewsSite.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(owner);
-                await _context.SaveChangesAsync();
+                Owner tempOwner = new Owner();
+                tempOwner = _context.Owner.SingleOrDefault(o => o.Name.ToLower() == owner.Name.ToLower().Trim());
+                if (tempOwner == null)
+                {
+                    _context.Add(owner);
+                    await _context.SaveChangesAsync();
+                }
+                else {
+                    ViewBag.errorMessage = "An author named '" + owner.Name+ "' already exists. Please try again.";
+                    ViewBag.errorRedirect = "Create";
+                    return View("Error");
+                }
                 return RedirectToAction("Index");
             }
             return View(owner);
@@ -73,7 +87,7 @@ namespace NewsSite.Controllers
                 Owner tempOwner = new Owner();
                 string ownerName = Request.Form["name"].ToString().Trim();
                 tempOwner = _context.Owner.SingleOrDefault(o=>o.Name == ownerName);
-                if (tempOwner!=null) {
+                if (tempOwner==null) {
                     Owner newOwner = new Owner();
                     newOwner.Address = Request.Form["address"].ToString().Trim();
                     newOwner.DateCreated = DateTime.Now;

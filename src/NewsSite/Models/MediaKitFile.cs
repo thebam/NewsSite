@@ -29,6 +29,10 @@ namespace NewsSite.Models
         [Display(Name = "Last Modified")]
         [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy h:mm tt}")]
         public DateTime DateModified { get; set; }
+        [Required]
+        [Display(Name = "Copyright Date")]
+        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
+        public DateTime CopyrightDate { get; set; }
         public bool Enabled { get; set; }
         public virtual ICollection<ArticleMediaKitFile> ArticleMediaKitFiles { get; set; }
         public virtual ICollection<MediaKitFileTag> MediaKitFileTags { get; set; }

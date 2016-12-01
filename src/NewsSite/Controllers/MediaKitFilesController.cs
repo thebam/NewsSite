@@ -31,7 +31,7 @@ namespace NewsSite.Controllers
             return View(await applicationDbContext.ToListAsync());
         }
         [HttpGet]
-        public async Task<IActionResult> GetAllFiles()
+        public JsonResult GetAllFiles()
         {
             List<ImageLibraryItem> library = new List<ImageLibraryItem>();
             List<MediaKitFile> mediaFiles = _context.MediaKitFile.Where(m => m.Enabled == true).ToList();
@@ -205,13 +205,7 @@ namespace NewsSite.Controllers
                 Int32 ownerid = 0;
                 if (!string.IsNullOrEmpty(Request.Form["ownerId"]))
                 {
-                    try
-                    {
-                        ownerid = Convert.ToInt32(Request.Form["ownerId"]);
-                    }
-                    catch (Exception ex) {
-                        ownerid = 0;
-                    }
+                    bool result = Int32.TryParse(Request.Form["ownerId"].ToString().Trim(), out ownerid);
                 }
                 if (!string.IsNullOrEmpty(Request.Form["ownerName"])) {
                     Owner newOwner = new Owner();
@@ -235,6 +229,7 @@ namespace NewsSite.Controllers
                 newKitFile.MediaType = Request.Form["mediaType"];
                 newKitFile.URL = convertedFilename;
                 newKitFile.OwnerId = ownerid;
+                newKitFile.CopyrightDate = Convert.ToDateTime(Request.Form["copyrightDate"]);
                 _context.Add(newKitFile);
                 await _context.SaveChangesAsync();
 

@@ -4,11 +4,9 @@
     ViewData["Title"] = "Details";
 }
 
-<h2>Details</h2>
+<h2>@Html.DisplayFor(model => model.Name)</h2>
 
 <div>
-    <h4>Owner</h4>
-    <hr />
     <dl class="dl-horizontal">
         <dt>
             @Html.DisplayNameFor(model => model.Address)
@@ -16,29 +14,12 @@
         <dd>
             @Html.DisplayFor(model => model.Address)
         </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.DateCreated)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.DateCreated)
-        </dd>
+        
         <dt>
             @Html.DisplayNameFor(model => model.Email)
         </dt>
         <dd>
             @Html.DisplayFor(model => model.Email)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Enabled)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Enabled)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Name)
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.Phone)
@@ -58,9 +39,224 @@
         <dd>
             @Html.DisplayFor(model => model.Website)
         </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DateCreated)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.DateCreated)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Enabled)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Enabled)
+        </dd>
     </dl>
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model.OwnerId">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
+<hr/>
+<h3>Media Kit Files</h3>
+<div class="clearfix">
+    @foreach (var mediaKitFile in ViewBag.mediaKitFiles)
+    {
+        <div style="width:30%;float:left;margin-left:1%;">
+            <img class="img-responsive" src="~/mediakitfiles/@mediaKitFile.URL" />
+            <p>
+                <strong>@mediaKitFile.Description</strong><br />
+                @mediaKitFile.DateCreated
+            </p>
+        </div>
+    }
+    <div class="clearfix"></div>
+    
+
+
+    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#fileModal" style="margin-top:15px;">
+        Upload New File
+    </button>
+
+</div>
+
+
+<div class="modal fade" tabindex="-1" role="dialog" id="fileModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Media Kit Files</h4>
+            </div>
+            <div class="modal-body">
+                <form method="post" enctype="multipart/form-data">
+                    <h3>Upload New File</h3>
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">File</label>
+                            <div class="col-md-10">
+                                <input type="file" id="files" multiple class="form-control" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">Filename</label>
+                            <div class="col-md-10">
+                                <input type="text" id="url" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">Description</label>
+                            <div class="col-md-10">
+                                <textarea id="Description" class="form-control"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">File Type</label>
+                            <div class="col-md-10">
+                                <select id="MediaType" class="form-control">
+                                    <option value="image">Image</option>
+                                    <option value="word">Word Document</option>
+                                    <option value="pdf">PDF</option>
+                                    <option value="spreadsheet">Spreadsheet</option>
+                                    <option value="ppt">Presentation</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <input type="hidden" id="OwnerId" name="OwnerId" value="@Model.OwnerId" />
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">Copyright Date</label>
+                            <div class="col-md-10">
+                                <input class="form-control" type="date" id="copyrightDate" name="copyrightDate" value="">
+                            </div>
+                        </div>
+                        
+
+
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">Tags</label>
+                            <div class="col-md-10">
+                                <input type="hidden" id="FileTags" class="form-control" value="," />
+
+                                <div id="SelectedFileTags" class="tagContainer">
+                                    <h5>SELECTED TAGS</h5> <em>click on available tags below to add</em><br />
+                                </div>
+                                <div id="UnselectedFileTags" class="availabletags" style="border:solid 1px #ccc;padding:15px;border-radius:5px;margin-top:15px;">
+                                    <h5>AVAILABLE TAGS</h5>
+                                    @foreach (var tag in ViewBag.tags)
+                                    {
+                                        <div class="btn btn-sm btn-default file-tag-btn" data-tag="@tag.TagId">@tag.TagName</div>
+                                    }
+                                    <div class="input-group" style="margin-top:15px;">
+                                        <input type="text" id="newFileTag" class="form-control" placeholder="Add New Tag" />
+                                        <div class="input-group-btn">
+                                            <div id="btnAddFileTag" class="btn btn-default">Add</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-10">
+                                <input type="button" id="upload" value="Upload File" class="btn btn-default" />
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#upload").click(function (evt) {
+            var fileUpload = $("#files").get(0);
+            var files = fileUpload.files;
+            var data = new FormData();
+            for (var i = 0; i < files.length ; i++) {
+                data.append(files[i].name, files[i]);
+            }
+            var description = $("#Description").val();
+            var mediaType = $("#MediaType").val();
+            var url = $("#url").val();
+            var ownerId = $("#OwnerId").val();
+            var fileTags = $("#FileTags").val();
+            var copyrightDate = $("#copyrightDate").val();
+            var ownerName = $("#ownerName").val();
+            if (ownerName) {
+                var address = $("#address").val();
+                var email = $("#email").val();
+                var phone = $("#phone").val();
+                var socialMedia = $("#socialMedia").val();
+                var website = $("#website").val();
+            } else {
+                ownerName = "";
+            }
+            
+            data.append("description", description);
+            data.append("mediaType", mediaType);
+            data.append("url", url);
+            data.append("ownerId", ownerId);
+            data.append("FileTags", fileTags);
+            data.append("copyrightDate", copyrightDate);
+            if (ownerName) {
+                data.append("ownerName", ownerName);
+                data.append("address", address);
+                data.append("email", email);
+                data.append("phone", phone);
+                data.append("socialMedia", socialMedia);
+                data.append("website", website);
+            }
+            
+
+            $.ajax({
+                type: "POST",
+                url: "/MediaKitFiles/UploadFilesAjax",
+                contentType: false,
+                processData: false,
+                dataType: "json",
+                data: data,
+                success: function (message) {
+                    var temp = JSON.stringify(message);
+                    var responseData = JSON.parse(temp);
+                    $("#fileModal").modal('hide');
+                    if (responseData["mediaType"] == "image") {
+                        $("<img class=\"file-btn\" data-tag=\"" + responseData["mediaKitFileId"] + "\" src=\"/mediakitfiles/" + responseData["url"] + "\" />").appendTo("#SelectedFiles");
+                    } else {
+                        $("<div class=\"btn btn-default file-btn\" data-tag=\"" + responseData["mediaKitFileId"] + "\">" + responseData["url"] + "</div>").appendTo("#SelectedFiles");
+
+                    }
+                    $("#ArticleMediaKitFiles").val($("#ArticleMediaKitFiles").val() + responseData["mediaKitFileId"] + ",");
+
+                    $("#files").val("");
+                    $("#Description").val("");
+                    $("#MediaType").val("");
+                    $("#url").val("");
+                    $("#OwnerId").val("");
+                    $("#FileTags").val("");
+
+                    $("#ownerName").val("");
+                    $("#address").val("");
+                    $("#email").val("");
+                    $("#phone").val("");
+                    $("#socialMedia").val("");
+                    $("#website").val("");
+
+                    $("#newOwner").hide();
+                    $("#openNewOwner").show();
+                    $("#OwnerId").show();
+
+                },
+                error: function () {
+                    alert("There was error uploading files!");
+                }
+            });
+        });
+    });
+</script>

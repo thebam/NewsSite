@@ -257,7 +257,12 @@
 
                             </div>
                         </div>
-
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">Copyright Date</label>
+                            <div class="col-md-10">
+                                <input class="form-control" type="date" id="copyrightDate" name="copyrightDate" value="">
+                            </div>
+                        </div>
 
                         
 
@@ -287,7 +292,7 @@
                         </div>
                         <div class="form-group">
                             <div class="col-md-offset-2 col-md-10">
-                                <input type="button" id="upload" value="Upload Files" class="btn btn-default" />
+                                <input type="button" id="upload" value="Upload File" class="btn btn-default" />
                             </div>
                         </div>
                     </div>
@@ -416,7 +421,7 @@
             var phone = $("#phone").val();
             var socialMedia = $("#socialMedia").val();
             var website = $("#website").val();
-
+            var copyrightDate = $("#copyrightDate").val();
 
 
 
@@ -434,7 +439,7 @@
             data.append("phone", phone);
             data.append("socialMedia", socialMedia);
             data.append("website", website);
-
+            data.append("copyrightDate", copyrightDate);
 
             $.ajax({
                 type: "POST",

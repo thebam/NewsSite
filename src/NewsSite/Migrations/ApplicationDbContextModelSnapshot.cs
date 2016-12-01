@@ -13,12 +13,13 @@ namespace NewsSite.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
             modelBuilder
-                .HasAnnotation("ProductVersion", "1.0.1")
+                .HasAnnotation("ProductVersion", "1.1.0-rtm-22752")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityRole", b =>
                 {
-                    b.Property<string>("Id");
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
@@ -103,8 +104,6 @@ namespace NewsSite.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.HasIndex("UserId");
-
                     b.ToTable("AspNetUserRoles");
                 });
 
@@ -125,7 +124,8 @@ namespace NewsSite.Migrations
 
             modelBuilder.Entity("NewsSite.Models.ApplicationUser", b =>
                 {
-                    b.Property<string>("Id");
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<int>("AccessFailedCount");
 
@@ -252,6 +252,8 @@ namespace NewsSite.Migrations
                 {
                     b.Property<int>("MediaKitFileId")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("CopyrightDate");
 
                     b.Property<DateTime>("DateCreated");
 
