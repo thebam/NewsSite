@@ -1,5 +1,5 @@
 ﻿
-    $(document).ready(function () {
+$(document).ready(function () {
         $(document).on('click', '.tag-btn', function () {
             processSelection(Number($(this).data('tag')),"ArticleTags",$(this), "SelectedTags", "UnselectedTags");
         });
@@ -63,6 +63,7 @@
             var ownerId = $("#OwnerId").val();
             var fileTags = $("#FileTags").val();
             var copyrightDate = $("#copyrightDate").val();
+            var altText = $("#altText").val();
             var ownerName = $("#ownerName").val();
             if (ownerName) {
                 var address = $("#address").val();
@@ -84,6 +85,7 @@
             data.append("ownerId", ownerId);
             data.append("FileTags", fileTags);
             data.append("copyrightDate", copyrightDate);
+            data.append("altText", altText);
             if (ownerName) {
                 data.append("ownerName", ownerName);
                 data.append("address", address);
@@ -112,9 +114,12 @@
                             $("<div class=\"btn btn-default file-btn\" data-tag=\"" + responseData["mediaKitFileId"] + "\">" + responseData["url"] + "</div>").appendTo("#SelectedFiles");
                         }
                     } else {
-                        alert("dddddddddddddd");
-                        $("<div class=\"mediakitFileWrapper\"><img class=\"img-responsive\" src=\"/mediakitfiles/" + responseData["url"] + " /><p><strong>" + responseData["description"] + "</strong><br />" + responseData["copyrightDate"] + "</p></div>").appendTo("#mediaKitFiles");
 
+
+
+
+
+                        $("<div class=\"mediakitFileWrapper\"><img class=\"img-responsive\" src=\"/mediakitfiles/" + responseData["url"] + "\" /><p><a href=\"~/MediaKitFiles/Edit/" + responseData["mediaKitFileId"] + "\">Edit File</a><br/>" + responseData["description"] + "<br/>&copy;" + responseData["copyrightDate"] + "<strong>tags</strong><br/></p></div>").appendTo("#mediaKitFiles");
                     }
                     $("#ArticleMediaKitFiles").val($("#ArticleMediaKitFiles").val() + responseData["mediaKitFileId"] + ",");
 

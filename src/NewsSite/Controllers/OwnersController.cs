@@ -40,9 +40,27 @@ namespace NewsSite.Controllers
             }
             List<MediaKitFile> mediaKitFiles = new List<MediaKitFile>();
             List<Tag> tags = _context.Tag.Where(t => t.Enabled == true).OrderBy(g => g.TagName).ToList<Tag>();
-            mediaKitFiles = _context.MediaKitFile.Where(m => m.OwnerId.Equals(owner.OwnerId)).OrderBy(k=>k.Description).ToList<MediaKitFile>();
+            mediaKitFiles = _context.MediaKitFile.Where(m => m.OwnerId.Equals(owner.OwnerId)).Include(t => t.MediaKitFileTags).OrderBy(k=>k.Description).ToList<MediaKitFile>();
+            
+            var kitfiles = _context.MediaKitFile
+                .Where(o => o.OwnerId.Equals(owner.OwnerId))
+                .Select(k => new MediaKitFileViewModel{
+                    MediaKitFileId = k.MediaKitFileId,
+                    URL = k.URL,
+                    Description = k.Description,
+                    CopyrightDate = k.CopyrightDate,
+                    TagNames = k.MediaKitFileTags
+                    .Join(_context.Tag, mt => mt.TagId, t => t.TagId, (mt, t) => new { mt, t })
+                    .Select(tt => new TagName
+                    {
+                        Name = tt.t.TagName
+                    }).ToList()
+            });
+            
+
             ViewBag.tags = tags;
-            ViewBag.mediaKitFiles = mediaKitFiles;
+            //ViewBag.mediaKitFiles = mediaKitFiles;
+            ViewBag.mediaKitFiles = kitfiles;
             return View(owner);
         }
 

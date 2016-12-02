@@ -211,6 +211,7 @@ namespace NewsSite.Migrations
                 {
                     MediaKitFileId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    AltText = table.Column<string>(nullable: false),
                     CopyrightDate = table.Column<DateTime>(nullable: false),
                     DateCreated = table.Column<DateTime>(nullable: false),
                     DateModified = table.Column<DateTime>(nullable: false),

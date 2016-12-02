@@ -107,7 +107,7 @@ namespace NewsSite.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("MediaKitFileId,DateCreated,DateModified,Description,Enabled,MediaType,OwnerId,ThumbnailURL,URL")] MediaKitFile mediaKitFile)
+        public async Task<IActionResult> Edit(int id, [Bind("MediaKitFileId,Description,Enabled,MediaType,OwnerId,ThumbnailURL,URL,AltText")] MediaKitFile mediaKitFile)
         {
             if (id != mediaKitFile.MediaKitFileId)
             {
@@ -229,6 +229,7 @@ namespace NewsSite.Controllers
                 newKitFile.URL = convertedFilename;
                 newKitFile.OwnerId = ownerid;
                 newKitFile.CopyrightDate = Convert.ToDateTime(Request.Form["copyrightDate"]);
+                newKitFile.AltText = Request.Form["altText"];
                 _context.Add(newKitFile);
                 await _context.SaveChangesAsync();
 

@@ -8,7 +8,7 @@ using NewsSite.Data;
 namespace NewsSite.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20161202014154_Initial")]
+    [Migration("20161202141431_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -253,6 +253,9 @@ namespace NewsSite.Migrations
                 {
                     b.Property<int>("MediaKitFileId")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<string>("AltText")
+                        .IsRequired();
 
                     b.Property<DateTime>("CopyrightDate");
 

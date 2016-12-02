@@ -33,6 +33,8 @@ namespace NewsSite.Models
         [Display(Name = "Copyright Date")]
         [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime CopyrightDate { get; set; }
+        [Required]
+        public String AltText { get; set; }
         public bool Enabled { get; set; }
         public virtual ICollection<ArticleMediaKitFile> ArticleMediaKitFiles { get; set; }
         public virtual ICollection<MediaKitFileTag> MediaKitFileTags { get; set; }

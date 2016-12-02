@@ -253,6 +253,9 @@ namespace NewsSite.Migrations
                     b.Property<int>("MediaKitFileId")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("AltText")
+                        .IsRequired();
+
                     b.Property<DateTime>("CopyrightDate");
 
                     b.Property<DateTime>("DateCreated");
