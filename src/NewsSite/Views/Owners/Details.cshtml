@@ -3,7 +3,13 @@
 @{
     ViewData["Title"] = "Details";
 }
-
+<style>
+    .mediakitFileWrapper {
+        width: 30%;
+        float: left;
+        margin-left: 1%;
+    }
+</style>
 <h2>@Html.DisplayFor(model => model.Name)</h2>
 
 <div>
@@ -60,14 +66,14 @@
 </div>
 <hr/>
 <h3>Media Kit Files</h3>
-<div class="clearfix">
+<div class="clearfix" id="mediaKitFiles" >
     @foreach (var mediaKitFile in ViewBag.mediaKitFiles)
     {
-        <div style="width:30%;float:left;margin-left:1%;">
+        <div class="mediakitFileWrapper">
             <img class="img-responsive" src="~/mediakitfiles/@mediaKitFile.URL" />
             <p>
                 <strong>@mediaKitFile.Description</strong><br />
-                @mediaKitFile.DateCreated
+                @mediaKitFile.CopyrightDate
             </p>
         </div>
     }
@@ -173,90 +179,4 @@
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 <script src="~/lib/jquery/dist/jquery.js"></script>
-<script>
-    $(document).ready(function () {
-        $("#upload").click(function (evt) {
-            var fileUpload = $("#files").get(0);
-            var files = fileUpload.files;
-            var data = new FormData();
-            for (var i = 0; i < files.length ; i++) {
-                data.append(files[i].name, files[i]);
-            }
-            var description = $("#Description").val();
-            var mediaType = $("#MediaType").val();
-            var url = $("#url").val();
-            var ownerId = $("#OwnerId").val();
-            var fileTags = $("#FileTags").val();
-            var copyrightDate = $("#copyrightDate").val();
-            var ownerName = $("#ownerName").val();
-            if (ownerName) {
-                var address = $("#address").val();
-                var email = $("#email").val();
-                var phone = $("#phone").val();
-                var socialMedia = $("#socialMedia").val();
-                var website = $("#website").val();
-            } else {
-                ownerName = "";
-            }
-            
-            data.append("description", description);
-            data.append("mediaType", mediaType);
-            data.append("url", url);
-            data.append("ownerId", ownerId);
-            data.append("FileTags", fileTags);
-            data.append("copyrightDate", copyrightDate);
-            if (ownerName) {
-                data.append("ownerName", ownerName);
-                data.append("address", address);
-                data.append("email", email);
-                data.append("phone", phone);
-                data.append("socialMedia", socialMedia);
-                data.append("website", website);
-            }
-            
-
-            $.ajax({
-                type: "POST",
-                url: "/MediaKitFiles/UploadFilesAjax",
-                contentType: false,
-                processData: false,
-                dataType: "json",
-                data: data,
-                success: function (message) {
-                    var temp = JSON.stringify(message);
-                    var responseData = JSON.parse(temp);
-                    $("#fileModal").modal('hide');
-                    if (responseData["mediaType"] == "image") {
-                        $("<img class=\"file-btn\" data-tag=\"" + responseData["mediaKitFileId"] + "\" src=\"/mediakitfiles/" + responseData["url"] + "\" />").appendTo("#SelectedFiles");
-                    } else {
-                        $("<div class=\"btn btn-default file-btn\" data-tag=\"" + responseData["mediaKitFileId"] + "\">" + responseData["url"] + "</div>").appendTo("#SelectedFiles");
-
-                    }
-                    $("#ArticleMediaKitFiles").val($("#ArticleMediaKitFiles").val() + responseData["mediaKitFileId"] + ",");
-
-                    $("#files").val("");
-                    $("#Description").val("");
-                    $("#MediaType").val("");
-                    $("#url").val("");
-                    $("#OwnerId").val("");
-                    $("#FileTags").val("");
-
-                    $("#ownerName").val("");
-                    $("#address").val("");
-                    $("#email").val("");
-                    $("#phone").val("");
-                    $("#socialMedia").val("");
-                    $("#website").val("");
-
-                    $("#newOwner").hide();
-                    $("#openNewOwner").show();
-                    $("#OwnerId").show();
-
-                },
-                error: function () {
-                    alert("There was error uploading files!");
-                }
-            });
-        });
-    });
-</script>
+<script src="~/js/tags.js"></script>

@@ -170,7 +170,6 @@ namespace NewsSite.Controllers
         {
             return _context.MediaKitFile.Any(e => e.MediaKitFileId == id);
         }
-        //http://www.binaryintellect.net/articles/f1cee257-378a-42c1-9f2f-075a3aed1d98.aspx
         [HttpPost]
         public async Task<IActionResult> UploadFilesAjax()
         {
