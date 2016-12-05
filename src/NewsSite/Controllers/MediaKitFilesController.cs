@@ -161,8 +161,24 @@ namespace NewsSite.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var mediaKitFile = await _context.MediaKitFile.SingleOrDefaultAsync(m => m.MediaKitFileId == id);
+
+            string filename = hostingEnv.WebRootPath + $@"\mediakitfiles\{mediaKitFile.URL}";
+            System.IO.File.Delete(filename);
+
+
+            List<MediaKitFileTag> mediaKitFileTags = _context.MediaKitFileTag.Where(m => m.MediaKitFileId == id).ToList();
+            List<ArticleMediaKitFile> articleKitFiles = _context.ArticleMediaKitFile.Where(m => m.MediaKitFileId == id).ToList();
+
+            foreach (MediaKitFileTag mediaKitFileTag in mediaKitFileTags) {
+                _context.MediaKitFileTag.Remove(mediaKitFileTag);
+            }
+            foreach (ArticleMediaKitFile articleKitFile in articleKitFiles)
+            {
+                _context.ArticleMediaKitFile.Remove(articleKitFile);
+            }
             _context.MediaKitFile.Remove(mediaKitFile);
             await _context.SaveChangesAsync();
+
             return RedirectToAction("Index");
         }
 
@@ -198,6 +214,7 @@ namespace NewsSite.Controllers
             }
             MediaKitFile newKitFile = new MediaKitFile();
             MediaKitFile tempKitFile = new MediaKitFile();
+            MediaKitFileViewModel output = new MediaKitFileViewModel();
             tempKitFile = _context.MediaKitFile.SingleOrDefault(m => m.URL.ToLower() == convertedFilename);
             if (tempKitFile == null)
             {
@@ -236,7 +253,7 @@ namespace NewsSite.Controllers
 
                 List<MediaKitFileTag> fileTags = new List<MediaKitFileTag>();
                 string newFileTags = Request.Form["FileTags"].ToString();
-
+                
                 if (!string.IsNullOrEmpty(newFileTags)) {
                     if (newFileTags.Substring(0, 1) == ",")
                     {
@@ -248,17 +265,28 @@ namespace NewsSite.Controllers
                         newFileTags = newFileTags.Substring(0, newFileTags.Length - 1);
                     }
 
-                    string[] tags = newFileTags.Split(',');
+                    List<String> tags = newFileTags.Split(',').ToList();
 
-                    for (var x = 0; x < tags.Length; x++)
+                    for (var x = 0; x < tags.Count; x++)
                     {
                         _context.MediaKitFileTag.Add(new MediaKitFileTag() { MediaKitFileId = newKitFile.MediaKitFileId, TagId = Convert.ToInt32(tags[x]) });
                     }
                     await _context.SaveChangesAsync();
+
+                    output.MediaKitFileId = newKitFile.MediaKitFileId;
+                    output.URL = newKitFile.URL;
+                    output.CopyrightDate = newKitFile.CopyrightDate;
+                    output.Description = newKitFile.Description;
+                    output.IconURL = newKitFile.URL;
+
+                    output.TagNames = _context.Tag.Where(t => tags.Contains(t.TagId.ToString())).Select(tt=> new TagName{
+                        Name = tt.TagName
+                    }).ToList();
                 }
 
             }
-            return Json(newKitFile);
+            //return Json(newKitFile);
+            return Json(output);
         }
     }
 

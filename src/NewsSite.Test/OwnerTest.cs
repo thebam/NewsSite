@@ -22,7 +22,7 @@ namespace NewsSite.Tests
                 optionsBuilder.UseInMemoryDatabase();
                 this._dbContext = new ApplicationDbContext(optionsBuilder.Options);
             // Add sample data
-            if (_dbContext.Owner.Count()!=3)
+            if (_dbContext.Owner.Count()==0)
             {
                 _dbContext.Owner.Add(new Owner()
                 {
@@ -51,6 +51,43 @@ namespace NewsSite.Tests
                     SocialMedia = "https://www.facebook.com/litus.marshall",
                     Website = "www.viliphotos.com"
                 });
+
+                //add media file associated with owner and tags associated with media file. On delete of owner, files and filetag looks ups should be deleted.
+                _dbContext.MediaKitFile.Add(new MediaKitFile()
+                {
+                    URL = "test.jpg",
+                    AltText = "test",
+                    Description = "test",
+                    OwnerId = 1,
+                    CopyrightDate = DateTime.Now,
+                    MediaType = "image",
+                    Enabled = true
+                });
+
+                _dbContext.Tag.Add(new Tag(){
+                    TagName = "stuff",
+                    Enabled =true
+                });
+                _dbContext.Tag.Add(new Tag()
+                {
+                    TagName = "category",
+                    Enabled = true
+                });
+                _dbContext.Tag.Add(new Tag()
+                {
+                    TagName = "interest",
+                    Enabled = true
+                });
+                _dbContext.MediaKitFileTag.Add(new MediaKitFileTag()
+                {
+                    MediaKitFileId=1,
+                    TagId =1
+                });
+                _dbContext.MediaKitFileTag.Add(new MediaKitFileTag()
+                {
+                    MediaKitFileId = 1,
+                    TagId = 2
+                });
                 _dbContext.SaveChanges();
             }
                 ctrlr = new OwnersController(this._dbContext);
@@ -76,7 +113,56 @@ namespace NewsSite.Tests
             var viewModel = Assert.IsType<Owner>(resultView.ViewData.Model);
             Assert.Equal("Savannah State University", viewModel.Name);
         }
+        [Fact]
+        public async void OwnersController_Create() {
+            Owner owner = new Owner()
+            {
+                Name = "Jason Saunders"
+            };
+            var result = await ctrlr.Create(owner);
+            var resultView = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal(1, _dbContext.Owner.Count(d => d.Name == "Jason Saunders"));
 
+            Owner dupOwner = new Owner()
+            {
+                Name = "Jason Saunders"
+            };
+            result = await ctrlr.Create(dupOwner);
+            Assert.Equal(1, _dbContext.Owner.Count(d => d.Name == "Jason Saunders"));
 
+            //last comment has potential fix http://stackoverflow.com/questions/37558049/modelstate-isvalid-always-true-when-testing-controller-in-asp-net-mvc-web-api
+            //Owner blankOwner = new Owner()
+            //{
+            //    Name = ""
+            //};
+            //result = await ctrlr.Create(blankOwner);
+            //Assert.Equal(0, _dbContext.Owner.Count(d => d.Name == ""));
+
+            Owner charOwner = new Owner()
+            {
+                Name = "`1234567890-=~!@#$%^&*()_+{}|:\"<>?[]\\;',./"
+            };
+            result = await ctrlr.Create(charOwner);
+            resultView = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal(1, _dbContext.Owner.Count(d => d.Name == "`1234567890-=~!@#$%^&*()_+{}|:\"<>?[]\\;',./"));
+        }
+        //[Fact]
+        //public async void OwnersController_CreateAjax() { }
+        [Fact]
+        public async void OwnersController_Delete() {
+            var result = await ctrlr.DeleteConfirmed(1);
+            var resultView = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal(0, _dbContext.Owner.Count(d => d.Name == "Savannah State University"));
+            Assert.Equal(0, _dbContext.MediaKitFile.Count());
+        }
+        //[Fact]
+        //public async void OwnersController_Edit() { }
+        [Fact]
+        public void OwnersController_OwnerExistsByName() {
+            var result = ctrlr.OwnerExistsByName("Savannah State University");
+            Assert.Equal(true, result);
+            result = ctrlr.OwnerExistsByName("Jimmy JoJo");
+            Assert.Equal(false, result);
+        }
     }
 }

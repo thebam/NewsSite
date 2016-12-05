@@ -38,15 +38,14 @@ namespace NewsSite.Controllers
             {
                 return NotFound();
             }
-            List<MediaKitFile> mediaKitFiles = new List<MediaKitFile>();
-            List<Tag> tags = _context.Tag.Where(t => t.Enabled == true).OrderBy(g => g.TagName).ToList<Tag>();
-            mediaKitFiles = _context.MediaKitFile.Where(m => m.OwnerId.Equals(owner.OwnerId)).Include(t => t.MediaKitFileTags).OrderBy(k=>k.Description).ToList<MediaKitFile>();
-            
+
+            //Get all media Kit files associated with this Owner. Must be done this way to get the Tag Names instead of just the TagId
             var kitfiles = _context.MediaKitFile
                 .Where(o => o.OwnerId.Equals(owner.OwnerId))
                 .Select(k => new MediaKitFileViewModel{
                     MediaKitFileId = k.MediaKitFileId,
                     URL = k.URL,
+                    IconURL = k.URL,
                     Description = k.Description,
                     CopyrightDate = k.CopyrightDate,
                     TagNames = k.MediaKitFileTags
@@ -56,10 +55,10 @@ namespace NewsSite.Controllers
                         Name = tt.t.TagName
                     }).ToList()
             });
-            
 
+            //Get all enabled tags
+            List<Tag> tags = _context.Tag.Where(t => t.Enabled == true).OrderBy(g => g.TagName).ToList<Tag>();
             ViewBag.tags = tags;
-            //ViewBag.mediaKitFiles = mediaKitFiles;
             ViewBag.mediaKitFiles = kitfiles;
             return View(owner);
         }
@@ -77,50 +76,79 @@ namespace NewsSite.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("OwnerId,Address,DateCreated,Email,Enabled,Name,Phone,SocialMedia,Website")] Owner owner)
         {
-            if (ModelState.IsValid)
+            //if (ModelState.IsValid)
+            //{
+            //    Owner tempOwner = new Owner();
+            //    tempOwner = _context.Owner.SingleOrDefault(o => o.Name.ToLower() == owner.Name.ToLower().Trim());
+            //    if (tempOwner == null)
+            //    {
+            //        _context.Add(owner);
+            //        await _context.SaveChangesAsync();
+            //    }
+            //    else {
+            //        ViewBag.errorMessage = "An author named '" + owner.Name+ "' already exists. Please try again.";
+            //        ViewBag.errorRedirect = "Create";
+            //        return View("Error");
+            //    }
+            //    return RedirectToAction("Index");
+            //}
+            //return View(owner);
+            if (CreateOwner(owner) == null)
             {
-                Owner tempOwner = new Owner();
-                tempOwner = _context.Owner.SingleOrDefault(o => o.Name.ToLower() == owner.Name.ToLower().Trim());
-                if (tempOwner == null)
-                {
-                    _context.Add(owner);
-                    await _context.SaveChangesAsync();
-                }
-                else {
-                    ViewBag.errorMessage = "An author named '" + owner.Name+ "' already exists. Please try again.";
-                    ViewBag.errorRedirect = "Create";
-                    return View("Error");
-                }
+                ViewBag.errorMessage = "An author named '" + owner.Name + "' already exists. Please try again.";
+                ViewBag.errorRedirect = "Create";
+                return View("Error");
+            }
+            else {
                 return RedirectToAction("Index");
             }
-            return View(owner);
         }
 
 
         [HttpPost]
         public async Task<IActionResult> CreateAjax()
         {
+            //string message = "";
+            //if (!String.IsNullOrEmpty(Request.Form["address"].ToString().Trim())) {
+            //    Owner tempOwner = new Owner();
+            //    string ownerName = Request.Form["name"].ToString().Trim();
+            //    tempOwner = _context.Owner.SingleOrDefault(o=>o.Name == ownerName);
+            //    if (tempOwner==null) {
+            //        Owner newOwner = new Owner();
+            //        newOwner.Address = Request.Form["address"].ToString().Trim();
+            //        newOwner.DateCreated = DateTime.Now;
+            //        newOwner.Email = Request.Form["email"].ToString().Trim();
+            //        newOwner.Enabled = true;
+            //        newOwner.Name = ownerName;
+            //        newOwner.Phone = Request.Form["phone"].ToString().Trim();
+            //        newOwner.SocialMedia = Request.Form["socialMedia"].ToString().Trim();
+            //        newOwner.Website = Request.Form["website"].ToString().Trim();
+            //        _context.Owner.Add(newOwner);
+            //        await _context.SaveChangesAsync();
+            //        message = "test" + newOwner.OwnerId;
+            //    }
+            //} else {
+            //    message = "error";
+            //}
+            //return Json(message);
+
             string message = "";
-            if (!String.IsNullOrEmpty(Request.Form["address"].ToString().Trim())) {
-                Owner tempOwner = new Owner();
-                string ownerName = Request.Form["name"].ToString().Trim();
-                tempOwner = _context.Owner.SingleOrDefault(o=>o.Name == ownerName);
-                if (tempOwner==null) {
-                    Owner newOwner = new Owner();
-                    newOwner.Address = Request.Form["address"].ToString().Trim();
-                    newOwner.DateCreated = DateTime.Now;
-                    newOwner.Email = Request.Form["email"].ToString().Trim();
-                    newOwner.Enabled = true;
-                    newOwner.Name = ownerName;
-                    newOwner.Phone = Request.Form["phone"].ToString().Trim();
-                    newOwner.SocialMedia = Request.Form["socialMedia"].ToString().Trim();
-                    newOwner.Website = Request.Form["website"].ToString().Trim();
-                    _context.Owner.Add(newOwner);
-                    await _context.SaveChangesAsync();
-                    message = "test" + newOwner.OwnerId;
-                }
-            } else {
+            Owner newOwner = new Owner();
+            newOwner.Address = Request.Form["address"].ToString().Trim();
+            newOwner.DateCreated = DateTime.Now;
+            newOwner.Email = Request.Form["email"].ToString().Trim();
+            newOwner.Enabled = true;
+            newOwner.Name = Request.Form["name"].ToString().Trim(); ;
+            newOwner.Phone = Request.Form["phone"].ToString().Trim();
+            newOwner.SocialMedia = Request.Form["socialMedia"].ToString().Trim();
+            newOwner.Website = Request.Form["website"].ToString().Trim();
+            if (CreateOwner(newOwner) == null)
+            {
                 message = "error";
+            }
+            else
+            {
+                message = "test" + newOwner.OwnerId;
             }
             return Json(message);
         }
@@ -210,5 +238,34 @@ namespace NewsSite.Controllers
         {
             return _context.Owner.Any(e => e.OwnerId == id);
         }
+
+        public bool OwnerExistsByName(String name)
+        {
+            return _context.Owner.Any(e => e.Name == name);
+        }
+
+        private Owner CreateOwner(Owner owner) {
+            if (ModelState.IsValid)
+            {
+                Owner tempOwner = new Owner();
+                tempOwner = _context.Owner.SingleOrDefault(o => o.Name.ToLower() == owner.Name.ToLower().Trim());
+                if (tempOwner == null)
+                {
+                    _context.Add(owner);
+                    _context.SaveChanges();
+                }
+                else
+                {
+                    owner = null;
+                }
+            }
+            else
+            {
+
+                owner = null;
+            }
+            return owner;
+        }
+
     }
 }

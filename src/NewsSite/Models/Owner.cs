@@ -10,7 +10,7 @@ namespace NewsSite.Models
             this.DateCreated = DateTime.Now;
         }
         public int OwnerId { get; set; }
-        [Required]
+        [Required(AllowEmptyStrings = false)]
         public string Name { get; set; }
         [DataType(DataType.EmailAddress, ErrorMessage = "Please enter a valid email address")]
         public string Email { get; set; }

@@ -23,31 +23,34 @@ $(document).ready(function () {
             addTag("newFileTag", "SelectedFileTags", "UnselectedFileTags", "FileTags","file-");
         });
 
-        function addTag(newTagElement, selectedTagsElement, unselectedTagsElement, allTags,tagPrefix) {
+        function addTag(newTagElement, selectedTagsElement, unselectedTagsElement, allTags, tagPrefix) {
+            var tempTagName = $("#" + newTagElement).val();
+            if (tempTagName.length > 0) {
+                $.ajax({
+                    type: "GET",
+                    url: "/Tags/CreateAjax?tagName=" + $("#" + newTagElement).val(),
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
 
-            $.ajax({
-                type: "GET",
-                url: "/Tags/CreateAjax?tagName=" + $("#" + newTagElement).val(),
-                contentType: false,
-                processData: false,
-                success: function (response) {
-
-                    var responseText = JSON.stringify(response);
-                    var responseData = JSON.parse(responseText);
-                    if (!responseData["status"]) {
-                        $("<div class=\"btn btn-sm btn-default tag-btn\" data-tag=\"" + responseData["id"] + "\">" + responseData["tag"] + "</div>").appendTo("#UnselectedTags");
-                        $("<div class=\"btn btn-sm btn-default file-tag-btn\" data-tag=\"" + responseData["id"] + "\">" + responseData["tag"] + "</div>").appendTo("#UnselectedFileTags");
-                        $("#" + unselectedTagsElement).children().last().remove();
-                        $("<div class=\"btn btn-sm btn-default " + tagPrefix + "tag-btn\" data-tag=\"" + responseData["id"] + "\">" + responseData["tag"] + "</div>").appendTo("#" + selectedTagsElement);
-                        $("#" + newTagElement).val("");
-                        $("#" + allTags).val($("#" + allTags).val() + responseData["id"] + ",");
-                    } else {
-                        alert(responseData["message"]);
-                    }
-                },
-                error: function (err) { alert("There was an error creating the tag."); }
-            });
-
+                        var responseText = JSON.stringify(response);
+                        var responseData = JSON.parse(responseText);
+                        if (!responseData["status"]) {
+                            $("<div class=\"btn btn-sm btn-default tag-btn\" data-tag=\"" + responseData["id"] + "\">" + responseData["tag"] + "</div>").appendTo("#UnselectedTags");
+                            $("<div class=\"btn btn-sm btn-default file-tag-btn\" data-tag=\"" + responseData["id"] + "\">" + responseData["tag"] + "</div>").appendTo("#UnselectedFileTags");
+                            $("#" + unselectedTagsElement).children().last().remove();
+                            $("<div class=\"btn btn-sm btn-default " + tagPrefix + "tag-btn\" data-tag=\"" + responseData["id"] + "\">" + responseData["tag"] + "</div>").appendTo("#" + selectedTagsElement);
+                            $("#" + newTagElement).val("");
+                            $("#" + allTags).val($("#" + allTags).val() + responseData["id"] + ",");
+                        } else {
+                            alert(responseData["message"]);
+                        }
+                    },
+                    error: function (err) { alert("There was an error creating the tag."); }
+                });
+            } else {
+                alert("Enter a tag before clicking the 'Add' button.");
+            }
         }
 
         $("#upload").click(function (evt) {
@@ -113,22 +116,23 @@ $(document).ready(function () {
                         } else {
                             $("<div class=\"btn btn-default file-btn\" data-tag=\"" + responseData["mediaKitFileId"] + "\">" + responseData["url"] + "</div>").appendTo("#SelectedFiles");
                         }
+                        $("#OwnerId").val("");
                     } else {
-
-
-
-
-
-                        $("<div class=\"mediakitFileWrapper\"><img class=\"img-responsive\" src=\"/mediakitfiles/" + responseData["url"] + "\" /><p><a href=\"~/MediaKitFiles/Edit/" + responseData["mediaKitFileId"] + "\">Edit File</a><br/>" + responseData["description"] + "<br/>&copy;" + responseData["copyrightDate"] + "<strong>tags</strong><br/></p></div>").appendTo("#mediaKitFiles");
+                        var tags = "";
+                        var tempDate = new Date(responseData["copyrightDate"]+"Z");
+                        for (var x = 0; x < responseData["tagNames"].length; x++) {
+                            tags += "<div class=\"btn btn-sm btn-default\">" + responseData["tagNames"][x]["name"] + "</div>"
+                        }
+                        $("<div class=\"mediakitFileWrapper\">" +  responseData["iconURL"] + "<p><a href=\"~/MediaKitFiles/Edit/" + responseData["mediaKitFileId"] + "\">Edit File</a> | <a href=\"~/MediaKitFiles/Delete/" + responseData["mediaKitFileId"] + "\">Delete File</a><br/>" + responseData["description"] + "<br/>&copy; " + tempDate.getFullYear() + "<br/><strong>tags</strong><br/>" + tags + "</p></div>").appendTo("#mediaKitFiles");
                     }
                     $("#ArticleMediaKitFiles").val($("#ArticleMediaKitFiles").val() + responseData["mediaKitFileId"] + ",");
 
-                    $("#files").val("");
+                    $("#files").val(",");
                     $("#Description").val("");
                     $("#MediaType").val("");
                     $("#url").val("");
-                    $("#OwnerId").val("");
-                    $("#FileTags").val("");
+                    
+                    $("#FileTags").val(",");
 
                     $("#ownerName").val("");
                     $("#address").val("");
@@ -136,11 +140,12 @@ $(document).ready(function () {
                     $("#phone").val("");
                     $("#socialMedia").val("");
                     $("#website").val("");
-
+                    $("#altText").val("");
+                    $("#copyrightDate").val("");
                     $("#newOwner").hide();
                     $("#openNewOwner").show();
                     $("#OwnerId").show();
-
+                    resetSelections("#SelectedFileTags .btn", "UnselectedFileTags");
                 },
                 error: function () {
                     alert("There was error uploading files!");
@@ -203,4 +208,33 @@ function checkSelected(itemId, allItems) {
     } else {
         return true;
     }
+}
+
+function resetSelections(childElements,unselectedElements) {
+    $(childElements).remove().clone().prependTo('#' + unselectedElements);
+}
+
+function checkFile() {
+    var el = $("#files");
+    var file = (el[0].files ? el[0].files[0] : el[0].value || undefined);
+    var supportedFormats = ['image/jpg', 'image/gif', 'image/png', 'application/msword', 'application/pdf', 'application/powerpoint', 'application/excel'];
+
+    if (file && file.type) {
+        if (0 > supportedFormats.indexOf(file.type)) {
+            alert('Unsupported file format. JPG, GIF, PNG, PDF, DOC, DOCX, XLS, XLSX, PPT, and PPTX are the only file formats accepted.');
+            $("#files").val("");
+        }
+
+        if (file.size > 31457280) {
+            alert('File size too large. File must be smaller than 30MB.');
+            $("#files").val("");
+        }
+    }
+}
+
+function formatFileName(inputElement) {
+    var tempString = $("#" + inputElement).val();
+    var outString = tempString.replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '');
+    outString = outString.split(' ').join('_');
+    $("#" + inputElement).val(outString);
 }
