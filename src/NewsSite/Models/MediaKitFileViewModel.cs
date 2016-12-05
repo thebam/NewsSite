@@ -21,13 +21,13 @@ namespace NewsSite.Models
                     switch (ext[ext.Length-1].ToLower())
                     {
                         case "jpg":
-                            _iconUrl = "<img class=\"img-responsive\" src=\"/mediakitfiles/" + _iconUrl + "\" />";
+                            _iconUrl = "<a href=\"/mediakitfiles/" + _iconUrl + "\"><img class=\"img-responsive\" src=\"/mediakitfiles/" + _iconUrl + "\" /></a>";
                             break;
                         case "gif":
-                            _iconUrl = "<img class=\"img-responsive\" src=\"/mediakitfiles/" + _iconUrl + "\" />";
+                            _iconUrl = "<a href=\"/mediakitfiles/" + _iconUrl + "\"><img class=\"img-responsive\" src=\"/mediakitfiles/" + _iconUrl + "\" /></a>";
                             break;
                         case "png":
-                            _iconUrl = "<img class=\"img-responsive\" src=\"/mediakitfiles/" + _iconUrl + "\" />";
+                            _iconUrl = "<a href=\"/mediakitfiles/" + _iconUrl + "\"><img class=\"img-responsive\" src=\"/mediakitfiles/" + _iconUrl + "\" /></a>";
                             break;
                         case "doc":
                             _iconUrl = "<a href=\"/mediakitfiles/" + _iconUrl + "\"><img class=\"img-responsive\" src=\"/images/word_icon.png\" /></a>";

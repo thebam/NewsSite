@@ -1,26 +1,88 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using NewsSite.Controllers;
 using NewsSite.Data;
 using NewsSite.Models;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.FileProviders;
 
 namespace NewsSite.Tests
 {
     public class OwnerTest
     {
-        public ApplicationDbContext _dbContext { get; set; }
+        protected IHostingEnvironment hostingEnv { get; set; }
+
+        public class Hosting : IHostingEnvironment
+        {
+            public string ApplicationName
+            {
+                get;set;
+            }
+
+            public IFileProvider ContentRootFileProvider
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+
+                set
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public string ContentRootPath
+            {
+                get;set;
+            }
+
+            public string EnvironmentName
+            {
+                get; set;
+            }
+
+            public IFileProvider WebRootFileProvider
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+
+                set
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public string WebRootPath
+            {
+                get; set;
+            }
+        }
+
+        private ApplicationDbContext _dbContext { get; set; }
         public OwnersController ctrlr { get; set; }
         public OwnerTest()
         {
+            hostingEnv = new Hosting()
+            {
+                ApplicationName = "NewsSite",
+                ContentRootPath = "c:\\users\\saundersj\\documents\\visual studio 2015\\projects\\newssite\\src\\newssite",
+                EnvironmentName = "Development",
+                WebRootPath = "c:\\users\\saundersj\\documents\\visual studio 2015\\projects\\newssite\\src\\newssite\\wwwroot"
+            };
             
-                var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
-                optionsBuilder.UseInMemoryDatabase();
-                this._dbContext = new ApplicationDbContext(optionsBuilder.Options);
+            var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
+            optionsBuilder.UseInMemoryDatabase();
+            this._dbContext = new ApplicationDbContext(optionsBuilder.Options);
+
+            
+
             // Add sample data
             if (_dbContext.Owner.Count()==0)
             {
@@ -28,8 +90,8 @@ namespace NewsSite.Tests
                 {
                     Name = "Savannah State University",
                     Address = "3219 College St., Savannah, GA 31404",
-                    Phone = "111-111-1111",
-                    Email = "test@savannahstate.edu",
+                    Phone = "",
+                    Email = "marketingandcommunications@savannahstate.edu",
                     SocialMedia = "https://www.facebook.com/savannahstate",
                     Website = "http://www.savannahstate.edu/"
                 });
@@ -49,49 +111,65 @@ namespace NewsSite.Tests
                     Phone = "",
                     Email = "",
                     SocialMedia = "https://www.facebook.com/litus.marshall",
-                    Website = "www.viliphotos.com"
-                });
-
-                //add media file associated with owner and tags associated with media file. On delete of owner, files and filetag looks ups should be deleted.
-                _dbContext.MediaKitFile.Add(new MediaKitFile()
-                {
-                    URL = "test.jpg",
-                    AltText = "test",
-                    Description = "test",
-                    OwnerId = 1,
-                    CopyrightDate = DateTime.Now,
-                    MediaType = "image",
-                    Enabled = true
-                });
-
-                _dbContext.Tag.Add(new Tag(){
-                    TagName = "stuff",
-                    Enabled =true
-                });
-                _dbContext.Tag.Add(new Tag()
-                {
-                    TagName = "category",
-                    Enabled = true
-                });
-                _dbContext.Tag.Add(new Tag()
-                {
-                    TagName = "interest",
-                    Enabled = true
-                });
-                _dbContext.MediaKitFileTag.Add(new MediaKitFileTag()
-                {
-                    MediaKitFileId=1,
-                    TagId =1
-                });
-                _dbContext.MediaKitFileTag.Add(new MediaKitFileTag()
-                {
-                    MediaKitFileId = 1,
-                    TagId = 2
+                    Website = "http://www.viliphotos.com"
                 });
                 _dbContext.SaveChanges();
+
+                Owner tempOwner = _dbContext.Owner.SingleOrDefault(d => d.Name == "Meaghan Gerard");
+                if (_dbContext.MediaKitFile.Count() == 0)
+                {
+                    _dbContext.MediaKitFile.Add(new MediaKitFile()
+                    {
+                        URL = "test.jpg",
+                        AltText = "test",
+                        Description = "test",
+                        OwnerId = tempOwner.OwnerId,
+                        CopyrightDate = DateTime.Now,
+                        MediaType = "image",
+                        Enabled = true
+                    });
+                    _dbContext.SaveChanges();
+                }
+                if (_dbContext.Tag.Count() == 0)
+                {
+                    _dbContext.Tag.Add(new Tag()
+                    {
+                        TagName = "stuff",
+                        Enabled = true
+                    });
+                    _dbContext.Tag.Add(new Tag()
+                    {
+                        TagName = "category",
+                        Enabled = true
+                    });
+                    _dbContext.Tag.Add(new Tag()
+                    {
+                        TagName = "interest",
+                        Enabled = true
+                    });
+
+                    _dbContext.SaveChanges();
+
+                    Tag stuffTag = _dbContext.Tag.SingleOrDefault(d => d.TagName == "stuff");
+                    Tag catTag = _dbContext.Tag.SingleOrDefault(d => d.TagName == "category");
+                    Tag intTag = _dbContext.Tag.SingleOrDefault(d => d.TagName == "interest");
+
+                    MediaKitFile media = _dbContext.MediaKitFile.SingleOrDefault(d => d.URL == "test.jpg");
+                    _dbContext.MediaKitFileTag.Add(new MediaKitFileTag()
+                    {
+                        MediaKitFileId = media.MediaKitFileId,
+                        TagId = stuffTag.TagId
+                    });
+                    _dbContext.MediaKitFileTag.Add(new MediaKitFileTag()
+                    {
+                        MediaKitFileId = media.MediaKitFileId,
+                        TagId = catTag.TagId
+                    });
+                    _dbContext.SaveChanges();
+                }
+                
             }
-                ctrlr = new OwnersController(this._dbContext);
-            
+            ctrlr = new OwnersController(this._dbContext, this.hostingEnv);
         }
 
 
@@ -108,58 +186,28 @@ namespace NewsSite.Tests
         [Fact]
         public async void OwnersController_Details()
         {
-            var result = await ctrlr.Details(1);
+            Owner detailsOwner = _dbContext.Owner.SingleOrDefault(d => d.Name == "Savannah State University");
+            var result = await ctrlr.Details(detailsOwner.OwnerId);
             var resultView = Assert.IsType<ViewResult>(result);
             var viewModel = Assert.IsType<Owner>(resultView.ViewData.Model);
             Assert.Equal("Savannah State University", viewModel.Name);
         }
-        [Fact]
-        public async void OwnersController_Create() {
-            Owner owner = new Owner()
-            {
-                Name = "Jason Saunders"
-            };
-            var result = await ctrlr.Create(owner);
-            var resultView = Assert.IsType<RedirectToActionResult>(result);
-            Assert.Equal(1, _dbContext.Owner.Count(d => d.Name == "Jason Saunders"));
-
-            Owner dupOwner = new Owner()
-            {
-                Name = "Jason Saunders"
-            };
-            result = await ctrlr.Create(dupOwner);
-            Assert.Equal(1, _dbContext.Owner.Count(d => d.Name == "Jason Saunders"));
-
-            //last comment has potential fix http://stackoverflow.com/questions/37558049/modelstate-isvalid-always-true-when-testing-controller-in-asp-net-mvc-web-api
-            //Owner blankOwner = new Owner()
-            //{
-            //    Name = ""
-            //};
-            //result = await ctrlr.Create(blankOwner);
-            //Assert.Equal(0, _dbContext.Owner.Count(d => d.Name == ""));
-
-            Owner charOwner = new Owner()
-            {
-                Name = "`1234567890-=~!@#$%^&*()_+{}|:\"<>?[]\\;',./"
-            };
-            result = await ctrlr.Create(charOwner);
-            resultView = Assert.IsType<RedirectToActionResult>(result);
-            Assert.Equal(1, _dbContext.Owner.Count(d => d.Name == "`1234567890-=~!@#$%^&*()_+{}|:\"<>?[]\\;',./"));
-        }
+        
         //[Fact]
         //public async void OwnersController_CreateAjax() { }
         [Fact]
         public async void OwnersController_Delete() {
-            var result = await ctrlr.DeleteConfirmed(1);
+            Owner owner = _dbContext.Owner.SingleOrDefault(d => d.Name == "Meaghan Gerard");
+            var result = await ctrlr.DeleteConfirmed(owner.OwnerId);
             var resultView = Assert.IsType<RedirectToActionResult>(result);
-            Assert.Equal(0, _dbContext.Owner.Count(d => d.Name == "Savannah State University"));
-            Assert.Equal(0, _dbContext.MediaKitFile.Count());
+            Assert.Equal(0, _dbContext.Owner.Count(d => d.Name == "Meaghan Gerard"));
+            Assert.Equal(0, _dbContext.MediaKitFile.Count(f => f.URL == "test.jpg"));
         }
         //[Fact]
         //public async void OwnersController_Edit() { }
         [Fact]
         public void OwnersController_OwnerExistsByName() {
-            var result = ctrlr.OwnerExistsByName("Savannah State University");
+            var result = ctrlr.OwnerExistsByName("Litus Marshall");
             Assert.Equal(true, result);
             result = ctrlr.OwnerExistsByName("Jimmy JoJo");
             Assert.Equal(false, result);

@@ -154,6 +154,8 @@ namespace NewsSite.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var tag = await _context.Tag.SingleOrDefaultAsync(m => m.TagId == id);
+            _context.MediaKitFileTag.RemoveRange(_context.MediaKitFileTag.Where(t => t.TagId == id));
+            _context.ArticleTag.RemoveRange(_context.ArticleTag.Where(t => t.TagId == id));
             _context.Tag.Remove(tag);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");

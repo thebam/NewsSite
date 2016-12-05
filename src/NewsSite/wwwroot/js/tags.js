@@ -123,11 +123,11 @@ $(document).ready(function () {
                         for (var x = 0; x < responseData["tagNames"].length; x++) {
                             tags += "<div class=\"btn btn-sm btn-default\">" + responseData["tagNames"][x]["name"] + "</div>"
                         }
-                        $("<div class=\"mediakitFileWrapper\">" +  responseData["iconURL"] + "<p><a href=\"~/MediaKitFiles/Edit/" + responseData["mediaKitFileId"] + "\">Edit File</a> | <a href=\"~/MediaKitFiles/Delete/" + responseData["mediaKitFileId"] + "\">Delete File</a><br/>" + responseData["description"] + "<br/>&copy; " + tempDate.getFullYear() + "<br/><strong>tags</strong><br/>" + tags + "</p></div>").appendTo("#mediaKitFiles");
+                        $("<div class=\"mediakitFileWrapper\">" + responseData["iconURL"] + "<p><a class=\"btn btn-sm btn-success\" href=\"~/mediakitfiles/" + responseData["url"] + "\" target=\"_blank\">download</a> <a class=\"btn btn-sm btn-info\" href=\"~/MediaKitFiles/Edit/" + responseData["mediaKitFileId"] + "\">edit file</a> <a class=\"btn btn-sm btn-danger\" href=\"~/MediaKitFiles/Delete/" + responseData["mediaKitFileId"] + "\">delete file</a><br/>" + responseData["description"] + "<br/>&copy; " + tempDate.getFullYear() + "<hr/><strong>tags</strong><br/>" + tags + "</p></div>").appendTo("#mediaKitFiles");
                     }
                     $("#ArticleMediaKitFiles").val($("#ArticleMediaKitFiles").val() + responseData["mediaKitFileId"] + ",");
 
-                    $("#files").val(",");
+                    $("#files").val("");
                     $("#Description").val("");
                     $("#MediaType").val("");
                     $("#url").val("");
@@ -217,7 +217,7 @@ function resetSelections(childElements,unselectedElements) {
 function checkFile() {
     var el = $("#files");
     var file = (el[0].files ? el[0].files[0] : el[0].value || undefined);
-    var supportedFormats = ['image/jpg', 'image/gif', 'image/png', 'application/msword', 'application/pdf', 'application/powerpoint', 'application/excel'];
+    var supportedFormats = ['image/jpeg', 'image/gif', 'image/png', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/pdf', 'application/powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation', 'application/excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
 
     if (file && file.type) {
         if (0 > supportedFormats.indexOf(file.type)) {
@@ -234,7 +234,7 @@ function checkFile() {
 
 function formatFileName(inputElement) {
     var tempString = $("#" + inputElement).val();
-    var outString = tempString.replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '');
-    outString = outString.split(' ').join('_');
+    var outString = tempString.replace(/[`~!@#$%^&*()_|+\=?;:'",.<>\{\}\[\]\\\/]/gi, '');
+    outString = outString.split(' ').join('-');
     $("#" + inputElement).val(outString);
 }

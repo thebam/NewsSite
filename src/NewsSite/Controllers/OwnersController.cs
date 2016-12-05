@@ -7,16 +7,18 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using NewsSite.Data;
 using NewsSite.Models;
+using Microsoft.AspNetCore.Hosting;
 
 namespace NewsSite.Controllers
 {
     public class OwnersController : Controller
     {
         private readonly ApplicationDbContext _context;
-
-        public OwnersController(ApplicationDbContext context)
+        private IHostingEnvironment hostingEnv;
+        public OwnersController(ApplicationDbContext context, IHostingEnvironment env)
         {
-            _context = context;    
+            _context = context;
+            hostingEnv = env;   
         }
 
         // GET: Owners
@@ -229,6 +231,18 @@ namespace NewsSite.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var owner = await _context.Owner.SingleOrDefaultAsync(m => m.OwnerId == id);
+
+            //Find all media kit files associated with the current ownerId. Loop thru them and delete the relationships between media files and tags, media files and articles, and media files records. Then delete the physical files
+            List<MediaKitFile> mediaKitFiles = _context.MediaKitFile.Where(o => o.OwnerId == id).ToList();
+            foreach (MediaKitFile mediaKitFile in mediaKitFiles)
+            {
+                _context.MediaKitFileTag.RemoveRange(_context.MediaKitFileTag.Where(m => m.MediaKitFileId == mediaKitFile.MediaKitFileId));
+                _context.ArticleMediaKitFile.RemoveRange(_context.ArticleMediaKitFile.Where(m => m.MediaKitFileId == mediaKitFile.MediaKitFileId));
+                _context.MediaKitFile.Remove(mediaKitFile);
+                string filename = hostingEnv.WebRootPath + $@"\mediakitfiles\{mediaKitFile.URL}";
+                System.IO.File.Delete(filename);
+            }
+
             _context.Owner.Remove(owner);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");

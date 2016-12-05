@@ -5,9 +5,22 @@
 }
 <style>
     .mediakitFileWrapper {
+        height:500px;
         width: 30%;
         float: left;
+        margin-top: 1%;
         margin-left: 1%;
+        border:solid 1px #ccc;
+        padding:15px;
+    }
+
+    .mediakitFileWrapper img {
+        max-height:200px;
+        margin:0 auto;
+    }
+
+    .mediakitFileWrapper p {
+       margin-top: 10px;
     }
 </style>
 <h2>@Html.DisplayFor(model => model.Name)</h2>
@@ -76,9 +89,13 @@
             <div class="mediakitFileWrapper">
                 @Html.Raw(mediaKitFile.IconURL)
                 <p>
-                    <a href="~/MediaKitFiles/Edit/@mediaKitFile.MediaKitFileId">Edit File</a> | <a href="~/MediaKitFiles/Delete/@mediaKitFile.MediaKitFileId">Delete File</a><br/>
+                    <a class="btn btn-sm btn-success" href="~/mediakitfiles/@mediaKitFile.URL" target="_blank">download</a>
+                    <a class="btn btn-sm btn-info" href="~/MediaKitFiles/Edit/@mediaKitFile.MediaKitFileId">edit file</a>
+                    <a class="btn btn-sm btn-danger" href="~/MediaKitFiles/Delete/@mediaKitFile.MediaKitFileId">delete file</a>
+                    <br/>
                     @mediaKitFile.Description<br />
-                    &copy; @mediaKitFile.CopyrightDate.ToString("yyyy")<br/>
+                    &copy; @mediaKitFile.CopyrightDate.ToString("yyyy")
+                    <hr />
                     <strong>tags</strong><br/>
                     @foreach (var tag in mediaKitFile.TagNames)
                     {
