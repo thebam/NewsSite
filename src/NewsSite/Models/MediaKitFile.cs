@@ -36,6 +36,7 @@ namespace NewsSite.Models
         [Required]
         public String AltText { get; set; }
         public bool Enabled { get; set; }
+        public Int32 DownloadCnt { get; set; }
         public virtual ICollection<ArticleMediaKitFile> ArticleMediaKitFiles { get; set; }
         public virtual ICollection<MediaKitFileTag> MediaKitFileTags { get; set; }
     }

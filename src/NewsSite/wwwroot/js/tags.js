@@ -16,6 +16,21 @@ $(document).ready(function () {
             $("#OwnerId").hide();
         });
 
+        
+        $("#btnCancelNewOwner").click(function () {
+            $("#newOwner").hide();
+            $("#openNewOwner").show();
+            $("#OwnerId").show();
+            $("#ownerName").val("");
+            $("#address").val("");
+            $("#email").val("");
+            $("#phone").val("");
+            $("#socialMedia").val("");
+            $("#website").val("");
+
+        });
+
+
         $("#btnAddTag").click(function () {
             addTag("newTag", "SelectedTags", "UnselectedTags", "ArticleTags","");
         });
@@ -237,4 +252,16 @@ function formatFileName(inputElement) {
     var outString = tempString.replace(/[`~!@#$%^&*()_|+\=?;:'",.<>\{\}\[\]\\\/]/gi, '');
     outString = outString.split(' ').join('-');
     $("#" + inputElement).val(outString);
+}
+
+/*Article Create*/
+function copyValues(from, to,blnFormat) {
+    var tempFrom = $("#" + from).val();
+    var tempTo = $("#" + to).val();
+    if(tempTo.length===0){
+        $("#" + to).val(tempFrom);
+        if (blnFormat) {
+            formatFileName(to);
+        }
+    }
 }

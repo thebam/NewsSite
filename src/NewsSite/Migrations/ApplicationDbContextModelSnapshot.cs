@@ -265,6 +265,8 @@ namespace NewsSite.Migrations
                     b.Property<string>("Description")
                         .IsRequired();
 
+                    b.Property<int>("DownloadCnt");
+
                     b.Property<bool>("Enabled");
 
                     b.Property<string>("MediaType");

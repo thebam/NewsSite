@@ -27,14 +27,14 @@
         <div class="form-group">
             <label asp-for="Title" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="Title" class="form-control" />
+                <input asp-for="Title" class="form-control" onblur="copyValues('Title', 'URL', true); copyValues('Title', 'OGTitle', false);" />
                 <span asp-validation-for="Title" class="text-danger" />
             </div>
         </div>
         <div class="form-group">
             <label asp-for="URL" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="URL" class="form-control" />
+                <input asp-for="URL" class="form-control" onchange="formatFileName('URL');" />
                 <span asp-validation-for="URL" class="text-danger" />
             </div>
         </div>
@@ -73,12 +73,14 @@
                 <div id="SelectedTags" class="tagContainer">
                     <h5>SELECTED TAGS</h5> <em>click on available tags below to add</em><br/>
                 </div>
-                <div id="UnselectedTags" class="availabletags tagContainer" >
+                <div class="availabletags tagContainer" >
                     <h5>AVAILABLE TAGS</h5>
-                    @foreach (var tag in ViewBag.tags)
-                    {
-                        <div class="btn btn-sm btn-default tag-btn" data-tag="@tag.TagId">@tag.TagName</div>
-                    }
+                    <div id="UnselectedTags">
+                        @foreach (var tag in ViewBag.tags)
+                        {
+                            <div class="btn btn-sm btn-default tag-btn" data-tag="@tag.TagId">@tag.TagName</div>
+                        }
+                    </div>
                     <div class="input-group" style="margin-top:15px;">
                         <input type="text" id="newTag" class="form-control" placeholder="Add New Tag" />
                         <div class="input-group-btn">
@@ -124,19 +126,21 @@
                 <div id="SelectedFiles" class="tagContainer">
                     <h5>SELECTED FILES</h5> <em>click on available files below to add</em><br />
                 </div>
-                <div id="UnselectedFiles" class="tagContainer">
+                <div class="tagContainer">
                     <h5>AVAILABLE FILES</h5>
-                    @foreach (var mediaFile in ViewBag.mediaFiles)
-                    {
-                        @if (mediaFile.MediaType.ToLower() == "image")
+                    <div id="UnselectedFiles">
+                        @foreach (var mediaFile in ViewBag.mediaFiles)
                         {
-                            <img class="file-btn" data-tag="@mediaFile.MediaKitFileId" src="~/mediakitfiles/@mediaFile.URL" />
+                            @if (mediaFile.MediaType.ToLower() == "image")
+                            {
+                                <img class="file-btn" data-tag="@mediaFile.MediaKitFileId" src="~/mediakitfiles/@mediaFile.URL" />
+                            }
+                            else
+                            {
+                                <div class="btn btn-default file-btn" data-tag="@mediaFile.MediaKitFileId">@mediaFile.URL</div>
+                            }
                         }
-                        else
-                        {
-                            <div class="btn btn-default file-btn" data-tag="@mediaFile.MediaKitFileId">@mediaFile.URL</div>
-                        }
-                    }
+                    </div>
                     <br/>
                     <button type="button" class="btn btn-default" data-toggle="modal" data-target="#fileModal" style="margin-top:15px;">
                         Upload New File
@@ -180,11 +184,17 @@
                         <div class="form-group">
                             <label class="col-md-2 control-label">Filename</label>
                             <div class="col-md-10">
-                                <input type="text" id="url" class="form-control" />
+                                <input type="text" id="url" class="form-control" onchange="formatFileName('url');" />
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-md-2 control-label">Description</label>
+                            <label class="col-md-2 control-label">Alt Text</label>
+                            <div class="col-md-10">
+                                <textarea id="altText" class="form-control"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">Caption</label>
                             <div class="col-md-10">
                                 <textarea id="Description" class="form-control"></textarea>
                             </div>
@@ -211,7 +221,7 @@
                                     }
                                 </select>
                                 <br/>
-                                <div id="openNewOwner" class="btn btn-default">Add New Owner</div>
+                                <div id="openNewOwner" class="btn btn-default">Add New Author</div>
 
 
 
@@ -249,9 +259,10 @@
                                     <div class="form-group">
                                         <label class="col-md-2 control-label">Website</label>
                                         <div class="col-md-10">
-                                            <input type="text" id="website" class="form-control" />
+                                            <input type="url" id="website" class="form-control" />
                                         </div>
                                     </div>
+                                    <div id="btnCancelNewOwner" class="btn btn-default">Cancel</div>
                                 </div>
 
 
@@ -274,12 +285,14 @@
                                 <div id="SelectedFileTags"  class="tagContainer">
                                     <h5>SELECTED TAGS</h5> <em>click on available tags below to add</em><br />
                                 </div>
-                                <div id="UnselectedFileTags" class="availabletags" style="border:solid 1px #ccc;padding:15px;border-radius:5px;margin-top:15px;">
+                                <div  class="availabletags" style="border:solid 1px #ccc;padding:15px;border-radius:5px;margin-top:15px;">
                                     <h5>AVAILABLE TAGS</h5>
-                                    @foreach (var tag in ViewBag.tags)
-                                    {
-                                        <div class="btn btn-sm btn-default file-tag-btn" data-tag="@tag.TagId">@tag.TagName</div>
-                                    }
+                                    <div id="UnselectedFileTags">
+                                        @foreach (var tag in ViewBag.tags)
+                                        {
+                                            <div class="btn btn-sm btn-default file-tag-btn" data-tag="@tag.TagId">@tag.TagName</div>
+                                        }
+                                    </div>
                                     <div class="input-group" style="margin-top:15px;">
                                         <input type="text" id="newFileTag" class="form-control" placeholder="Add New Tag" />
                                         <div class="input-group-btn">
@@ -292,7 +305,7 @@
                         </div>
                         <div class="form-group">
                             <div class="col-md-offset-2 col-md-10">
-                                <input type="button" id="upload" value="Upload File" class="btn btn-default" />
+                                <input type="button" id="upload" value="Upload File" class="btn btn-success" />
                             </div>
                         </div>
                     </div>
