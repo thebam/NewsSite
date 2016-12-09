@@ -1,71 +1,56 @@
-@model IEnumerable<NewsSite.Models.MediaKitFile>
+@model IEnumerable<NewsSite.Models.MediaKitFileViewModel>
 
 @{
     ViewData["Title"] = "Index";
 }
+<style>
+    .mediakitFileWrapper {
+        height: 500px;
+        width: 30%;
+        float: left;
+        margin-top: 1%;
+        margin-left: 1%;
+        border: solid 1px #ccc;
+        padding: 15px;
+    }
 
+        .mediakitFileWrapper img {
+            max-height: 200px;
+            margin: 0 auto;
+        }
+
+        .mediakitFileWrapper p {
+            margin-top: 10px;
+        }
+</style>
 <h2>Media Kit Files</h2>
 
 <p>
     <a class="btn btn-success" asp-action="Create">Create New</a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.URL)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MediaType)
-            </th>
-            <th>
-                Author
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Enabled)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DateCreated)
-            </th>
-            
-            
-            
-            
-            
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.URL)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MediaType)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Owner.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Enabled)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateCreated)
-            </td>
-            
-            
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.MediaKitFileId">Edit</a> |
-                <a asp-action="Delete" asp-route-id="@item.MediaKitFileId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+
+
+<div class="clearfix" id="mediaKitFiles">
+    @foreach (var mediaKitFile in Model)
+    {
+        <div class="mediakitFileWrapper">
+            @Html.Raw(mediaKitFile.IconURL)
+            <p>
+                <a class="btn btn-sm btn-info" asp-action="Edit" asp-route-id="@mediaKitFile.MediaKitFileId">Edit</a>
+                <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@mediaKitFile.MediaKitFileId">Delete</a>
+                <br />
+                @mediaKitFile.Description<br />
+                &copy; @mediaKitFile.CopyrightDate.ToString("yyyy")<br/>
+                <strong>Author</strong><br/>
+                <a class="btn btn-default" asp-controller="Owners" asp-action="Details" asp-route-id="@mediaKitFile.Owner.OwnerId">@mediaKitFile.Owner.Name</a>
+                <hr />
+                <strong>tags</strong><br />
+                @foreach (var tag in mediaKitFile.TagNames)
+                {
+                    <div class="btn btn-sm btn-default">@tag.Name</div>
+                }
+            </p>
+        </div>
+    }
+</div>
+

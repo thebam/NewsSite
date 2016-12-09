@@ -27,8 +27,25 @@ namespace NewsSite.Controllers
         // GET: MediaKitFiles
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.MediaKitFile.Include(m => m.Owner);
-            return View(await applicationDbContext.ToListAsync());
+            //Get all media Kit files associated with this Owner. Must be done this way to get the Tag Names instead of just the TagId
+            var kitfiles = _context.MediaKitFile
+                .Select(k => new MediaKitFileViewModel
+                {
+                    MediaKitFileId = k.MediaKitFileId,
+                    URL = k.URL,
+                    IconURL = k.URL,
+                    Description = k.Description,
+                    CopyrightDate = k.CopyrightDate,
+                    Owner = k.Owner,
+                    TagNames = k.MediaKitFileTags
+                    .Join(_context.Tag, mt => mt.TagId, t => t.TagId, (mt, t) => new { mt, t })
+                    .Select(tt => new TagName
+                    {
+                        Name = tt.t.TagName
+                    }).ToList()
+                });
+            
+            return View(kitfiles);
         }
         [HttpGet]
         public JsonResult GetAllFiles()
@@ -187,7 +204,7 @@ namespace NewsSite.Controllers
             return _context.MediaKitFile.Any(e => e.MediaKitFileId == id);
         }
         [HttpPost]
-        public async Task<IActionResult> UploadFilesAjax()
+        public async Task<IActionResult> UploadFileAjax()
         {
             long size = 0;
             var files = Request.Form.Files;
@@ -280,6 +297,113 @@ namespace NewsSite.Controllers
                     output.IconURL = newKitFile.URL;
 
                     output.TagNames = _context.Tag.Where(t => tags.Contains(t.TagId.ToString())).Select(tt=> new TagName{
+                        Name = tt.TagName
+                    }).ToList();
+                }
+
+            }
+            //return Json(newKitFile);
+            return Json(output);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UploadFilesAjax()
+        {
+            long size = 0;
+            var files = Request.Form.Files;
+            var filename = "";
+            var convertedFilename = "";
+            foreach (var file in files)
+            {
+                filename = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+                var fileExt = "";
+                string[] fileParts = filename.ToString().Split('.');
+
+                if (fileParts.Length >= 2)
+                {
+                    fileExt = "." + fileParts[fileParts.Length - 1];
+                }
+
+                filename = hostingEnv.WebRootPath + $@"\mediakitfiles\{Request.Form["url"] + fileExt}";
+                size += file.Length;
+                using (FileStream fs = System.IO.File.Create(filename))
+                {
+                    file.CopyTo(fs);
+                    fs.Flush();
+                }
+                convertedFilename = Request.Form["url"] + fileExt;
+            }
+            MediaKitFile newKitFile = new MediaKitFile();
+            MediaKitFile tempKitFile = new MediaKitFile();
+            MediaKitFileViewModel output = new MediaKitFileViewModel();
+            tempKitFile = _context.MediaKitFile.SingleOrDefault(m => m.URL.ToLower() == convertedFilename);
+            if (tempKitFile == null)
+            {
+                Int32 ownerid = 0;
+                if (!string.IsNullOrEmpty(Request.Form["ownerId"]))
+                {
+                    bool result = Int32.TryParse(Request.Form["ownerId"].ToString().Trim(), out ownerid);
+                }
+                if (!string.IsNullOrEmpty(Request.Form["ownerName"]))
+                {
+                    Owner newOwner = new Owner();
+                    newOwner.Name = Request.Form["ownerName"].ToString().Trim();
+                    newOwner.Address = Request.Form["address"].ToString().Trim();
+                    newOwner.Email = Request.Form["email"].ToString().Trim();
+                    newOwner.Phone = Request.Form["phone"].ToString().Trim();
+                    newOwner.SocialMedia = Request.Form["socialMedia"].ToString().Trim();
+                    newOwner.Website = Request.Form["website"].ToString().Trim();
+                    newOwner.DateCreated = DateTime.Now;
+
+                    _context.Add(newOwner);
+                    await _context.SaveChangesAsync();
+                    ownerid = newOwner.OwnerId;
+                }
+
+                newKitFile.DateCreated = DateTime.Now;
+                newKitFile.DateModified = DateTime.Now;
+                newKitFile.Description = Request.Form["description"];
+                newKitFile.Enabled = true;
+                newKitFile.MediaType = Request.Form["mediaType"];
+                newKitFile.URL = convertedFilename;
+                newKitFile.OwnerId = ownerid;
+                newKitFile.CopyrightDate = Convert.ToDateTime(Request.Form["copyrightDate"]);
+                newKitFile.AltText = Request.Form["altText"];
+                _context.Add(newKitFile);
+                await _context.SaveChangesAsync();
+
+
+                List<MediaKitFileTag> fileTags = new List<MediaKitFileTag>();
+                string newFileTags = Request.Form["FileTags"].ToString();
+
+                if (!string.IsNullOrEmpty(newFileTags))
+                {
+                    if (newFileTags.Substring(0, 1) == ",")
+                    {
+                        newFileTags = newFileTags.Substring(1, newFileTags.Length - 1);
+                    }
+
+                    if (newFileTags.Substring(newFileTags.Length - 1, 1) == ",")
+                    {
+                        newFileTags = newFileTags.Substring(0, newFileTags.Length - 1);
+                    }
+
+                    List<String> tags = newFileTags.Split(',').ToList();
+
+                    for (var x = 0; x < tags.Count; x++)
+                    {
+                        _context.MediaKitFileTag.Add(new MediaKitFileTag() { MediaKitFileId = newKitFile.MediaKitFileId, TagId = Convert.ToInt32(tags[x]) });
+                    }
+                    await _context.SaveChangesAsync();
+
+                    output.MediaKitFileId = newKitFile.MediaKitFileId;
+                    output.URL = newKitFile.URL;
+                    output.CopyrightDate = newKitFile.CopyrightDate;
+                    output.Description = newKitFile.Description;
+                    output.IconURL = newKitFile.URL;
+
+                    output.TagNames = _context.Tag.Where(t => tags.Contains(t.TagId.ToString())).Select(tt => new TagName
+                    {
                         Name = tt.TagName
                     }).ToList();
                 }

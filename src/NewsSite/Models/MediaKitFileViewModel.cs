@@ -60,6 +60,7 @@ namespace NewsSite.Models
         }
 
         public DateTime CopyrightDate { get; set; }
+        public Owner Owner { get; set; }
         public List<TagName> TagNames { get; set; }
     }
 

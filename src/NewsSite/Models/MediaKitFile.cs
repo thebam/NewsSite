@@ -31,9 +31,10 @@ namespace NewsSite.Models
         public DateTime DateModified { get; set; }
         [Required]
         [Display(Name = "Copyright Date")]
-        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
+        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}",ApplyFormatInEditMode =true)]
         public DateTime CopyrightDate { get; set; }
         [Required]
+        [Display(Name ="Alt Text")]
         public String AltText { get; set; }
         public bool Enabled { get; set; }
         public Int32 DownloadCnt { get; set; }
