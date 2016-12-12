@@ -20,7 +20,7 @@ namespace NewsSite.Tests
         {
             public string ApplicationName
             {
-                get;set;
+                get; set;
             }
 
             public IFileProvider ContentRootFileProvider
@@ -38,7 +38,7 @@ namespace NewsSite.Tests
 
             public string ContentRootPath
             {
-                get;set;
+                get; set;
             }
 
             public string EnvironmentName
@@ -66,7 +66,6 @@ namespace NewsSite.Tests
         }
 
         private ApplicationDbContext _dbContext { get; set; }
-        public OwnersController ctrlr { get; set; }
         public OwnerTest()
         {
             hostingEnv = new Hosting()
@@ -76,137 +75,125 @@ namespace NewsSite.Tests
                 EnvironmentName = "Development",
                 WebRootPath = "c:\\users\\saundersj\\documents\\visual studio 2015\\projects\\newssite\\src\\newssite\\wwwroot"
             };
-            
+
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
             optionsBuilder.UseInMemoryDatabase();
-            this._dbContext = new ApplicationDbContext(optionsBuilder.Options);
+            var context = new ApplicationDbContext(optionsBuilder.Options);
 
-            
-
-            // Add sample data
-            if (_dbContext.Owner.Count()==0)
+            context.Owner.Add(new Owner()
             {
-                _dbContext.Owner.Add(new Owner()
-                {
-                    Name = "Savannah State University",
-                    Address = "3219 College St., Savannah, GA 31404",
-                    Phone = "",
-                    Email = "marketingandcommunications@savannahstate.edu",
-                    SocialMedia = "https://www.facebook.com/savannahstate",
-                    Website = "http://www.savannahstate.edu/"
-                });
-                _dbContext.Owner.Add(new Owner()
-                {
-                    Name = "Meaghan Gerard",
-                    Address = "",
-                    Phone = "",
-                    Email = "gerardm@savannahstate.edu",
-                    SocialMedia = "",
-                    Website = ""
-                });
-                _dbContext.Owner.Add(new Owner()
-                {
-                    Name = "Litus Marshall",
-                    Address = "",
-                    Phone = "",
-                    Email = "",
-                    SocialMedia = "https://www.facebook.com/litus.marshall",
-                    Website = "http://www.viliphotos.com"
-                });
-                _dbContext.SaveChanges();
+                Name = "Savannah State University",
+                Address = "3219 College St., Savannah, GA 31404",
+                Phone = "",
+                Email = "marketingandcommunications@savannahstate.edu",
+                SocialMedia = "https://www.facebook.com/savannahstate",
+                Website = "http://www.savannahstate.edu/"
+            });
+            context.Owner.Add(new Owner()
+            {
+                Name = "Meaghan Gerard",
+                Address = "",
+                Phone = "",
+                Email = "gerardm@savannahstate.edu",
+                SocialMedia = "",
+                Website = ""
+            });
+            context.Owner.Add(new Owner()
+            {
+                Name = "Litus Marshall",
+                Address = "",
+                Phone = "",
+                Email = "",
+                SocialMedia = "https://www.facebook.com/litus.marshall",
+                Website = "http://www.viliphotos.com"
+            });
 
-                Owner tempOwner = _dbContext.Owner.SingleOrDefault(d => d.Name == "Meaghan Gerard");
-                if (_dbContext.MediaKitFile.Count() == 0)
-                {
-                    _dbContext.MediaKitFile.Add(new MediaKitFile()
-                    {
-                        URL = "test.jpg",
-                        AltText = "test",
-                        Description = "test",
-                        OwnerId = tempOwner.OwnerId,
-                        CopyrightDate = DateTime.Now,
-                        MediaType = "image",
-                        Enabled = true
-                    });
-                    _dbContext.SaveChanges();
-                }
-                if (_dbContext.Tag.Count() == 0)
-                {
-                    _dbContext.Tag.Add(new Tag()
-                    {
-                        TagName = "stuff",
-                        Enabled = true
-                    });
-                    _dbContext.Tag.Add(new Tag()
-                    {
-                        TagName = "category",
-                        Enabled = true
-                    });
-                    _dbContext.Tag.Add(new Tag()
-                    {
-                        TagName = "interest",
-                        Enabled = true
-                    });
 
-                    _dbContext.SaveChanges();
+            context.MediaKitFile.Add(new MediaKitFile()
+            {
+                URL = "test.jpg",
+                AltText = "test",
+                Description = "test",
+                OwnerId = 1,
+                CopyrightDate = DateTime.Now,
+                MediaType = "image",
+                Enabled = true
+            });
 
-                    Tag stuffTag = _dbContext.Tag.SingleOrDefault(d => d.TagName == "stuff");
-                    Tag catTag = _dbContext.Tag.SingleOrDefault(d => d.TagName == "category");
-                    Tag intTag = _dbContext.Tag.SingleOrDefault(d => d.TagName == "interest");
+            context.Tag.Add(new Tag()
+            {
+                TagName = "stuff",
+                Enabled = true
+            });
+            context.Tag.Add(new Tag()
+            {
+                TagName = "category",
+                Enabled = true
+            });
+            context.Tag.Add(new Tag()
+            {
+                TagName = "interest",
+                Enabled = true
+            });
 
-                    MediaKitFile media = _dbContext.MediaKitFile.SingleOrDefault(d => d.URL == "test.jpg");
-                    _dbContext.MediaKitFileTag.Add(new MediaKitFileTag()
-                    {
-                        MediaKitFileId = media.MediaKitFileId,
-                        TagId = stuffTag.TagId
-                    });
-                    _dbContext.MediaKitFileTag.Add(new MediaKitFileTag()
-                    {
-                        MediaKitFileId = media.MediaKitFileId,
-                        TagId = catTag.TagId
-                    });
-                    _dbContext.SaveChanges();
-                }
-                
-            }
-            ctrlr = new OwnersController(this._dbContext, this.hostingEnv);
+
+            context.MediaKitFileTag.Add(new MediaKitFileTag()
+            {
+                MediaKitFileId = 1,
+                TagId = 1
+            });
+            context.MediaKitFileTag.Add(new MediaKitFileTag()
+            {
+                MediaKitFileId = 1,
+                TagId = 2
+            });
+            context.SaveChanges();
+            _dbContext = context;
+
+
+
         }
 
 
         [Fact]
         public async void OwnersController_Index()
         {
+            OwnersController ctrlr = new OwnersController(_dbContext, hostingEnv);
             var result = await ctrlr.Index();
             var resultView = Assert.IsType<ViewResult>(result);
             var viewModel = Assert.IsType<List<Owner>>(resultView.ViewData.Model).ToList();
-            Assert.Equal(1, viewModel.Count(d => d.Name == "Savannah State University"));
-            Assert.Equal(1, viewModel.Count(d => d.Name == "Meaghan Gerard"));
-            Assert.Equal(1, viewModel.Count(d => d.Name == "Litus Marshall"));
+            Assert.Equal(1, viewModel.Count(d => d.OwnerId == 1));
+            Assert.Equal(1, viewModel.Count(d => d.OwnerId==2));
+            Assert.Equal(1, viewModel.Count(d => d.OwnerId==3));
         }
         [Fact]
         public async void OwnersController_Details()
         {
+            OwnersController ctrlr = new OwnersController(_dbContext, hostingEnv);
             Owner detailsOwner = _dbContext.Owner.SingleOrDefault(d => d.Name == "Savannah State University");
             var result = await ctrlr.Details(detailsOwner.OwnerId);
             var resultView = Assert.IsType<ViewResult>(result);
             var viewModel = Assert.IsType<Owner>(resultView.ViewData.Model);
             Assert.Equal("Savannah State University", viewModel.Name);
         }
-        
+
         //[Fact]
         //public async void OwnersController_CreateAjax() { }
         [Fact]
-        public async void OwnersController_Delete() {
-            Owner owner = _dbContext.Owner.SingleOrDefault(d => d.Name == "Meaghan Gerard");
-            var result = await ctrlr.DeleteConfirmed(owner.OwnerId);
+        public async void OwnersController_Delete()
+        {
+            OwnersController ctrlr = new OwnersController(_dbContext, hostingEnv);
+            var result = await ctrlr.DeleteConfirmed(1);
             var resultView = Assert.IsType<RedirectToActionResult>(result);
-            Assert.Equal(0, _dbContext.Owner.Count(d => d.Name == "Meaghan Gerard"));
+            Assert.Equal(0, _dbContext.Owner.Count(d => d.OwnerId == 1));
             Assert.Equal(0, _dbContext.MediaKitFile.Count(f => f.URL == "test.jpg"));
         }
         //[Fact]
         //public async void OwnersController_Edit() { }
         [Fact]
-        public void OwnersController_OwnerExistsByName() {
+        public void OwnersController_OwnerExistsByName()
+        {
+            OwnersController ctrlr = new OwnersController(_dbContext, hostingEnv);
             var result = ctrlr.OwnerExistsByName("Litus Marshall");
             Assert.Equal(true, result);
             result = ctrlr.OwnerExistsByName("Jimmy JoJo");

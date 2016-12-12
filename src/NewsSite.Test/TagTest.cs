@@ -14,71 +14,70 @@ namespace NewsSite.Test
     public class TagTest
     {
 
-        private ApplicationDbContext _dbContext { get; set; }
-        public TagsController ctrlr { get; set; }
+        private ApplicationDbContext _dbContext;
         public TagTest()
         {
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
             optionsBuilder.UseInMemoryDatabase();
-            this._dbContext = new ApplicationDbContext(optionsBuilder.Options);
-
-            if (_dbContext.Tag.Count() == 0)
-            {
-                _dbContext.Tag.Add(new Tag()
+            var context = new ApplicationDbContext(optionsBuilder.Options);
+            
+                context.Tag.Add(new Tag()
                 {
                     TagName = "stuff",
                     Enabled = true
                 });
-                _dbContext.Tag.Add(new Tag()
+                context.Tag.Add(new Tag()
                 {
                     TagName = "category",
                     Enabled = true
                 });
-                _dbContext.Tag.Add(new Tag()
+                context.Tag.Add(new Tag()
                 {
                     TagName = "interest",
                     Enabled = true
                 });
-                _dbContext.MediaKitFileTag.Add(new MediaKitFileTag()
+                context.MediaKitFileTag.Add(new MediaKitFileTag()
                 {
                     MediaKitFileId = 1,
                     TagId = 1
                 });
-                _dbContext.MediaKitFileTag.Add(new MediaKitFileTag()
+                context.MediaKitFileTag.Add(new MediaKitFileTag()
                 {
                     MediaKitFileId = 1,
                     TagId = 2
                 });
-                _dbContext.ArticleTag.Add(new ArticleTag()
+                context.ArticleTag.Add(new ArticleTag()
                 {
                     ArticleId = 1,
                     TagId = 1
                 });
-                _dbContext.ArticleTag.Add(new ArticleTag()
+                context.ArticleTag.Add(new ArticleTag()
                 {
                     ArticleId = 1,
                     TagId = 2
                 });
-            }
-            _dbContext.SaveChangesAsync();
-            ctrlr = new TagsController(this._dbContext);
+            context.SaveChanges();
+            _dbContext = context;
         }
 
 
 
         [Fact]
         public async void TagsController_Index() {
+            //TO DO write test to check usagecnt
+            var ctrlr = new TagsController(_dbContext);
             var result = await ctrlr.Index();
             var resultView = Assert.IsType<ViewResult>(result);
-            var viewModel = Assert.IsType<List<Tag>>(resultView.ViewData.Model).ToList();
-            Assert.Equal(1, viewModel.Count(d => d.TagName == "stuff"));
-            Assert.Equal(1, viewModel.Count(d => d.TagName == "category"));
-            Assert.Equal(1, viewModel.Count(d => d.TagName == "interest"));
+            var viewModel = Assert.IsType<List<TagIndexViewModel>>(resultView.ViewData.Model).ToList();
+            Assert.True(1 <= viewModel.Count(d => d.TagName == "stuff"));
+            Assert.True(1 <= viewModel.Count(d => d.TagName == "category"));
+            Assert.True(1 <= viewModel.Count(d => d.TagName == "interest"));
         }
 
         [Fact]
         public async void TagsController_Create()
         {
+            var ctrlr = new TagsController(_dbContext);
             Tag tag = new Tag()
             {
                 TagName = "misc"
@@ -114,7 +113,8 @@ namespace NewsSite.Test
         [Fact]
         public async void TagsController_Edit()
         {
-            Tag tag = _dbContext.Tag.SingleOrDefault(d => d.TagName == "stuff");
+            var ctrlr = new TagsController(_dbContext);
+            Tag tag = _dbContext.Tag.SingleOrDefault(d => d.TagId == 1);
             tag.TagName = "more stuff";
             var result = await ctrlr.Edit(tag.TagId,tag);
             var resultView = Assert.IsType<RedirectToActionResult>(result);
@@ -123,9 +123,10 @@ namespace NewsSite.Test
 
         public async void TagsController_Delete()
         {
-            var result = await ctrlr.DeleteConfirmed(1);
+            var ctrlr = new TagsController(_dbContext);
+            var result = await ctrlr.DeleteConfirmed(2);
             var resultView = Assert.IsType<RedirectToActionResult>(result);
-            Assert.Equal(0, _dbContext.Tag.Count(d => d.TagName == "stuff"));
+            Assert.Equal(0, _dbContext.Tag.Count(d => d.TagId == 2));
             Assert.Equal(1, _dbContext.ArticleTag.Count());
             Assert.Equal(2, _dbContext.MediaKitFileTag.Count());
         }

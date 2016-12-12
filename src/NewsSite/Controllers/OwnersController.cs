@@ -240,7 +240,10 @@ namespace NewsSite.Controllers
                 _context.ArticleMediaKitFile.RemoveRange(_context.ArticleMediaKitFile.Where(m => m.MediaKitFileId == mediaKitFile.MediaKitFileId));
                 _context.MediaKitFile.Remove(mediaKitFile);
                 string filename = hostingEnv.WebRootPath + $@"\mediakitfiles\{mediaKitFile.URL}";
-                System.IO.File.Delete(filename);
+                if (System.IO.File.Exists(filename))
+                {
+                    System.IO.File.Delete(filename);
+                }
             }
 
             _context.Owner.Remove(owner);

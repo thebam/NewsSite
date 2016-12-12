@@ -22,7 +22,24 @@ namespace NewsSite.Controllers
         // GET: Tags
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Tag.ToListAsync());
+            var query =
+    from t in _context.Tag
+    select new TagIndexViewModel()
+    {
+        TagId= t.TagId,
+        TagName = t.TagName,
+        Enabled = t.Enabled,
+        DateCreated = t.DateCreated,
+        UsageCnt = (from m in _context.MediaKitFileTag
+                 where m.TagId == t.TagId
+                 select t).Count() + (from a in _context.ArticleTag
+                                      where a.TagId == t.TagId
+                                      select t).Count()
+
+    };
+
+            
+            return View(await query.OrderByDescending(t => t.UsageCnt).ToListAsync<TagIndexViewModel>());
         }
 
 
@@ -73,9 +90,10 @@ namespace NewsSite.Controllers
                 tag.Enabled = true;
                 _context.Add(tag);
                 await _context.SaveChangesAsync();
-                return Json(new { id = tag.TagId, tag = tag.TagName});
+                return Json(new { id = tag.TagId, tag = tag.TagName });
             }
-            else {
+            else
+            {
                 return Json(new { status = "error", message = "Tag already exists." });
             }
         }
@@ -88,12 +106,35 @@ namespace NewsSite.Controllers
                 return NotFound();
             }
 
-            var tag = await _context.Tag.SingleOrDefaultAsync(m => m.TagId == id);
-            if (tag == null)
+            //var tag = await _context.Tag.SingleOrDefaultAsync(m => m.TagId == id);
+
+            var query =
+    from t in _context.Tag
+    where t.TagId == id
+    select new TagIndexViewModel()
+    {
+        TagId = t.TagId,
+        TagName = t.TagName,
+        Enabled = t.Enabled,
+        DateCreated = t.DateCreated,
+        Articles = (from a in _context.Article
+                   from at in _context.ArticleTag
+                   where a.ArticleId == at.ArticleId && at.TagId == id
+                   select a
+                   ).ToList<Article>(),
+        MediaKitFiles = (from m in _context.MediaKitFile
+                    from mt in _context.MediaKitFileTag
+                    where m.MediaKitFileId == mt.MediaKitFileId && mt.TagId == id
+                    select m
+                   ).ToList<MediaKitFile>()
+    };
+
+
+            if (query == null)
             {
                 return NotFound();
             }
-            return View(tag);
+            return View(query.FirstOrDefault());
         }
 
         // POST: Tags/Edit/5
@@ -101,7 +142,7 @@ namespace NewsSite.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("TagId,DateCreated,Enabled,TagName")] Tag tag)
+        public async Task<IActionResult> Edit(int id, [Bind("TagId,Enabled,TagName")] Tag tag)
         {
             if (id != tag.TagId)
             {

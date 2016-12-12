@@ -1,4 +1,4 @@
-@model IEnumerable<NewsSite.Models.Tag>
+@model IEnumerable<NewsSite.Models.TagIndexViewModel>
 
 @{
     ViewData["Title"] = "Index";
@@ -9,38 +9,23 @@
 <p>
     <a class="btn btn-success" asp-action="Create">Create New</a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.TagName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Enabled)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DateCreated)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.TagName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Enabled)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateCreated)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.TagId">Edit</a> |
-                <a asp-action="Delete" asp-route-id="@item.TagId">Delete</a>
-            </td>
-        </tr>
+
+@foreach (var item in Model)
+{
+
+    <div class="btn btn-default btn-lg" type="button">
+        @Html.DisplayFor(modelItem => item.TagName) <span title="usage counter" class="badge">@Html.DisplayFor(modelItem => item.UsageCnt)</span> <br/>
+
+        @if (item.Enabled == true)
+        {
+        <i class="glyphicon glyphicon glyphicon-check"></i>
+        }
+        else
+        {
+        <i class="glyphicon glyphicon glyphicon-minus-sign"></i>
+        }
+        &nbsp;<a title="edit" class="btn btn-sm btn-info" asp-action="Edit" asp-route-id="@item.TagId"><i class="glyphicon glyphicon glyphicon-pencil"></i></a>
+        <a title="delete" class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.TagId"><i class="glyphicon glyphicon glyphicon-trash"></i></a>
+    </div>
+    
 }
-    </tbody>
-</table>

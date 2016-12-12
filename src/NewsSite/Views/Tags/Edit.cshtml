@@ -1,4 +1,4 @@
-@model NewsSite.Models.Tag
+@model NewsSite.Models.TagIndexViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -25,17 +25,39 @@
                 </div>
             </div>
         </div>
+        
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Save" class="btn btn-default" />
             </div>
         </div>
+        <hr />
+
     </div>
 </form>
 
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
+
+<h3>Related Items</h3>
+<h4>Articles</h4>
+@foreach (var article in Model.Articles)
+{
+    <div>
+        @article.Title
+    </div>
+
+}
+<h4>Media Kit Files</h4>
+@foreach (var mediaKitFile in Model.MediaKitFiles)
+{
+    <div>
+        @mediaKitFile.URL
+        @mediaKitFile.Description
+    </div>
+
+}
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
