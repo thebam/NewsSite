@@ -180,8 +180,9 @@ namespace NewsSite.Controllers
             var mediaKitFile = await _context.MediaKitFile.SingleOrDefaultAsync(m => m.MediaKitFileId == id);
 
             string filename = hostingEnv.WebRootPath + $@"\mediakitfiles\{mediaKitFile.URL}";
-            System.IO.File.Delete(filename);
-
+            if (System.IO.File.Exists(filename)) {
+                System.IO.File.Delete(filename);
+            }
 
             List<MediaKitFileTag> mediaKitFileTags = _context.MediaKitFileTag.Where(m => m.MediaKitFileId == id).ToList();
             List<ArticleMediaKitFile> articleKitFiles = _context.ArticleMediaKitFile.Where(m => m.MediaKitFileId == id).ToList();
@@ -309,7 +310,6 @@ namespace NewsSite.Controllers
         [HttpPost]
         public async Task<IActionResult> UploadFilesAjax()
         {
-            long size = 0;
             var files = Request.Form.Files;
             var filename = "";
             var convertedFilename = "";
@@ -325,7 +325,6 @@ namespace NewsSite.Controllers
                 }
 
                 filename = hostingEnv.WebRootPath + $@"\mediakitfiles\{Request.Form["url"] + fileExt}";
-                size += file.Length;
                 using (FileStream fs = System.IO.File.Create(filename))
                 {
                     file.CopyTo(fs);

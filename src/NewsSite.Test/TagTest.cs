@@ -68,7 +68,7 @@ namespace NewsSite.Test
             var ctrlr = new TagsController(_dbContext);
             var result = await ctrlr.Index();
             var resultView = Assert.IsType<ViewResult>(result);
-            var viewModel = Assert.IsType<List<TagIndexViewModel>>(resultView.ViewData.Model).ToList();
+            var viewModel = Assert.IsType<List<TagViewModel>>(resultView.ViewData.Model).ToList();
             Assert.True(1 <= viewModel.Count(d => d.TagName == "stuff"));
             Assert.True(1 <= viewModel.Count(d => d.TagName == "category"));
             Assert.True(1 <= viewModel.Count(d => d.TagName == "interest"));

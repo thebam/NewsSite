@@ -24,7 +24,7 @@ namespace NewsSite.Controllers
         {
             var query =
     from t in _context.Tag
-    select new TagIndexViewModel()
+    select new TagViewModel()
     {
         TagId= t.TagId,
         TagName = t.TagName,
@@ -39,7 +39,7 @@ namespace NewsSite.Controllers
     };
 
             
-            return View(await query.OrderByDescending(t => t.UsageCnt).ToListAsync<TagIndexViewModel>());
+            return View(await query.OrderByDescending(t => t.UsageCnt).ToListAsync<TagViewModel>());
         }
 
 
@@ -55,47 +55,88 @@ namespace NewsSite.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("TagId,DateCreated,Enabled,TagName")] Tag tag)
+        public async Task<IActionResult> Create([Bind("TagId,Enabled,TagName")] Tag tag)
         {
-            if (ModelState.IsValid)
+            //if (ModelState.IsValid)
+            //{
+            //    Tag tempTag = _context.Tag.SingleOrDefault(t => t.TagName.ToLower().Trim() == tag.TagName.ToLower().Trim());
+            //    if (tempTag == null)
+            //    {
+            //        tag.DateCreated = DateTime.Now;
+            //        tag.Enabled = true;
+            //        _context.Add(tag);
+            //        await _context.SaveChangesAsync();
+            //        return RedirectToAction("Index");
+            //    }
+            //    else
+            //    {
+            //        return RedirectToAction("Index");
+            //    }
+            //}
+            //return View(tag);
+            if (CreateTag(tag) == null)
             {
-                Tag tempTag = _context.Tag.SingleOrDefault(t => t.TagName.ToLower().Trim() == tag.TagName.ToLower().Trim());
-                if (tempTag == null)
-                {
-                    tag.DateCreated = DateTime.Now;
-                    tag.Enabled = true;
-                    _context.Add(tag);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction("Index");
-                }
-                else
-                {
-                    return RedirectToAction("Index");
-                }
+                ViewBag.errorMessage = "A tag named '" + tag.TagName + "' already exists. Please try again.";
+                ViewBag.errorRedirect = "Create";
+                return View("Error");
             }
-            return View(tag);
+            else
+            {
+                return RedirectToAction("Index");
+            }
         }
 
         [HttpGet]
         public async Task<IActionResult> CreateAjax()
         {
+            //string tagName = "";
+            //tagName = (string)Request.Query["tagName"];
+            //Tag tempTag = _context.Tag.SingleOrDefault(t => t.TagName.ToLower().Trim() == tagName.ToLower().Trim());
+            //if (tempTag == null)
+            //{
+            //    Tag tag = new Tag();
+            //    tag.TagName = tagName.Trim();
+            //    tag.DateCreated = DateTime.Now;
+            //    tag.Enabled = true;
+            //    _context.Add(tag);
+            //    await _context.SaveChangesAsync();
+            //    return Json(new { id = tag.TagId, tag = tag.TagName });
+            //}
+            //else
+            //{
+            //    return Json(new { status = "error", message = "Tag already exists." });
+            //}
             string tagName = "";
             tagName = (string)Request.Query["tagName"];
-            Tag tempTag = _context.Tag.SingleOrDefault(t => t.TagName.ToLower().Trim() == tagName.ToLower().Trim());
-            if (tempTag == null)
+            Tag tag = new Tag()
             {
-                Tag tag = new Tag();
-                tag.TagName = tagName.Trim();
-                tag.DateCreated = DateTime.Now;
-                tag.Enabled = true;
-                _context.Add(tag);
-                await _context.SaveChangesAsync();
-                return Json(new { id = tag.TagId, tag = tag.TagName });
-            }
-            else
+                TagName = tagName.Trim()
+            };
+            if (CreateTag(tag) == null)
             {
                 return Json(new { status = "error", message = "Tag already exists." });
             }
+            else
+            {
+                return Json(new { id = tag.TagId, tag = tag.TagName });
+            }
+        }
+
+
+        private Tag CreateTag(Tag tag) {
+            Tag tempTag = _context.Tag.SingleOrDefault(t => t.TagName.ToLower().Trim() == tag.TagName.ToLower().Trim());
+            if (tempTag == null)
+            {
+                tag.TagName = tag.TagName.Trim();
+                tag.DateCreated = DateTime.Now;
+                tag.Enabled = true;
+                _context.Add(tag);
+                _context.SaveChanges();
+            }
+            else {
+                tag = null;
+            }
+            return tag;
         }
 
         // GET: Tags/Edit/5
@@ -111,7 +152,7 @@ namespace NewsSite.Controllers
             var query =
     from t in _context.Tag
     where t.TagId == id
-    select new TagIndexViewModel()
+    select new TagViewModel()
     {
         TagId = t.TagId,
         TagName = t.TagName,

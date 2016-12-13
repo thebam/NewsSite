@@ -3,9 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace NewsSite.Models
 {
-    public class TagIndexViewModel : Tag
+    public class TagViewModel : Tag
     {
-        public TagIndexViewModel() {
+        public TagViewModel() {
             this.UsageCnt = 0;
         }
         [Display(Name ="Usage Count")]

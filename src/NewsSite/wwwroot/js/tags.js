@@ -43,7 +43,7 @@ $(document).ready(function () {
             if (tempTagName.length > 0) {
                 $.ajax({
                     type: "GET",
-                    url: "/Tags/CreateAjax?tagName=" + $("#" + newTagElement).val(),
+                    url: "../../Tags/CreateAjax?tagName=" + $("#" + newTagElement).val(),
                     contentType: false,
                     processData: false,
                     success: function (response) {
@@ -115,7 +115,7 @@ $(document).ready(function () {
 
             $.ajax({
                 type: "POST",
-                url: "/MediaKitFiles/UploadFilesAjax",
+                url: "../../MediaKitFiles/UploadFilesAjax",
                 contentType: false,
                 processData: false,
                 dataType:"json",
@@ -232,7 +232,7 @@ function resetSelections(childElements,unselectedElements) {
 function checkFile() {
     var el = $("#files");
     var file = (el[0].files ? el[0].files[0] : el[0].value || undefined);
-    var supportedFormats = ['image/jpeg', 'image/gif', 'image/png', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/pdf', 'application/powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation', 'application/excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+    var supportedFormats = ['image/jpeg', 'image/pjpeg', 'image/gif', 'image/png', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/pdf', 'application/powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation', 'application/excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
 
     if (file && file.type) {
         if (0 > supportedFormats.indexOf(file.type)) {
