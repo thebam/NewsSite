@@ -13,9 +13,11 @@ namespace NewsSite.Models
         }
         public int MediaKitFileId { get; set; }
         [Required]
+        [Display(Name ="Custom URL")]
         public string URL { get; set; }
         public string ThumbnailURL { get; set; }
         [Required]
+        [Display(Name ="Caption")]
         public string Description { get; set; }
         [Required]
         public int OwnerId { get; set; }

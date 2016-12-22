@@ -4,7 +4,7 @@
     ViewData["Title"] = "Edit";
 }
 
-<h2>Edit</h2>
+<h1>Edit</h1>
 
 <form asp-action="Edit">
     <div class="form-horizontal">
@@ -28,20 +28,15 @@
         
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-success" />
+                <input type="submit" value="Save" class="btn btn-success" /> <a class="btn btn-default" asp-action="Index">Back to List</a>
             </div>
         </div>
-        <hr />
-
     </div>
 </form>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
-<h3>Related Items</h3>
-<h4>Articles</h4>
+<hr class="wavy"/>
+<h2>Related Items</h2>
+<h3>Articles</h3>
 @foreach (var article in Model.Articles)
 {
     <div>
@@ -49,16 +44,19 @@
     </div>
 
 }
-<h4>Media Kit Files</h4>
-@foreach (var mediaKitFile in Model.MediaKitFiles)
-{
-    <div>
-        @mediaKitFile.URL
-        @mediaKitFile.Description
-    </div>
+<h3>Media Kit Files</h3>
+<div id="mediaKitFiles">
+    @foreach (var mediaKitFile in Model.MediaKitFiles)
+    {
+        <div class="mediakitFileWrapper">
+            @Html.Raw(mediaKitFile.IconURL)
+            <p>
+                <strong>caption</strong><br /> @mediaKitFile.Description
+            </p>
+        </div>
 
-}
-
+    }
+</div>
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

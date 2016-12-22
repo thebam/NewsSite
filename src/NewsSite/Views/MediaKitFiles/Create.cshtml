@@ -1,82 +1,143 @@
 @model NewsSite.Models.MediaKitFile
 
-@{
-    ViewData["Title"] = "Create";
-}
 
-<h2>New Media Kit File</h2>
-<form asp-action="Create">
-    <div class="form-horizontal">
-        <hr />
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <div class="form-group">
-            <label asp-for="DateCreated" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="DateCreated" class="form-control" />
-                <span asp-validation-for="DateCreated" class="text-danger" />
+<h1>New Media Kit File</h1>
+<div class="form-horizontal">
+    <form method="post" enctype="multipart/form-data">
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label class="col-md-3 control-label">File</label>
+                <div class="col-md-9">
+                    <input type="file" id="files" multiple class="form-control" />
+                    <span id="filesError" class="text-danger error">File is required.</span>
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="DateModified" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="DateModified" class="form-control" />
-                <span asp-validation-for="DateModified" class="text-danger" />
+            <div class="form-group">
+                <label class="col-md-3 control-label">Custom URL</label>
+                <div class="col-md-9">
+                    <input type="text" id="url" class="form-control" onchange="formatFileName('url');" />
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="Description" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger" />
+            <div class="form-group">
+                <label class="col-md-3 control-label">Alt Text</label>
+                <div class="col-md-9">
+                    <textarea id="altText" class="form-control"></textarea>
+                    <span id="altTextError" class="text-danger error">Alt text is required.</span>
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <div class="checkbox">
-                    <input asp-for="Enabled" />
-                    <label asp-for="Enabled"></label>
+            <div class="form-group">
+                <label class="col-md-3 control-label">Caption</label>
+                <div class="col-md-9">
+                    <textarea id="Description" class="form-control"></textarea>
+                    <span id="descriptionError" class="text-danger error">Caption is required.</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-3 control-label">Author</label>
+                <div class="col-md-9">
+                    <select id="OwnerId" class="form-control">
+                        @foreach (var owner in ViewBag.owners)
+                        {
+                            <option value="@owner.OwnerId">@owner.Name</option>
+                        }
+                    </select>
+                    <br />
+                    <div id="openNewOwner" class="btn btn-default">Add New Author</div>
+
+
+
+                    <div id="newOwner" style="display:none;">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">Name</label>
+                            <div class="col-md-9">
+                                <input type="text" id="ownerName" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">Address</label>
+                            <div class="col-md-9">
+                                <input type="text" id="address" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">Email</label>
+                            <div class="col-md-9">
+                                <input type="email" id="email" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">Phone</label>
+                            <div class="col-md-9">
+                                <input type="tel" id="phone" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">Social Media</label>
+                            <div class="col-md-9">
+                                <input type="text" id="socialMedia" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">Website</label>
+                            <div class="col-md-9">
+                                <input type="url" id="website" class="form-control" />
+                            </div>
+                        </div>
+                        <div id="btnCancelNewOwner" class="btn btn-default">Cancel</div>
+                    </div>
+
+
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-3 control-label">Copyright Date</label>
+                <div class="col-md-9">
+                    <input class="form-control" type="date" id="copyrightDate" name="copyrightDate" value="">
+                    <span id="copyrightDateError" class="text-danger error">Copyright date is required.</span>
+                </div>
+            </div>
+
+
+
+            <div class="form-group">
+                <label class="col-md-3 control-label">Tags</label>
+                <div class="col-md-9">
+                    <input type="hidden" id="FileTags" class="form-control" value="," />
+
+                    <div id="SelectedFileTags" class="tagContainer">
+                        <h5>SELECTED TAGS</h5> <em>click on available tags below to add</em><br />
+                    </div>
+                    <span id="FileTagsError" class="text-danger error">At least one tag is required.</span>
+                    <div class="availabletags" style="border:solid 1px #ccc;padding:15px;border-radius:5px;margin-top:15px;">
+                        <h5>AVAILABLE TAGS</h5>
+                        <div id="UnselectedFileTags">
+                            @foreach (var tag in ViewBag.tags)
+                            {
+                                <div class="btn btn-sm btn-default file-tag-btn" data-tag="@tag.TagId">@tag.TagName</div>
+                            }
+                        </div>
+                        <div class="input-group" style="margin-top:15px;">
+                            <input type="text" id="newFileTag" class="form-control" placeholder="Add New Tag" />
+                            <div class="input-group-btn">
+                                <div id="btnAddFileTag" class="btn btn-default">Add</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-offset-3 col-md-9">
+                    <input type="button" id="upload" value="Upload File" class="btn btn-success" />
+                    <a class="btn btn-default" asp-action="Index">Back to List</a>
                 </div>
             </div>
         </div>
-        <div class="form-group">
-            <label asp-for="MediaType" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="MediaType" class="form-control" />
-                <span asp-validation-for="MediaType" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="OwnerId" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <select asp-for="OwnerId" class ="form-control" asp-items="ViewBag.OwnerId"></select>
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="ThumbnailURL" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="ThumbnailURL" class="form-control" />
-                <span asp-validation-for="ThumbnailURL" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="URL" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="URL" class="form-control" />
-                <span asp-validation-for="URL" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-success" />
-            </div>
-        </div>
-    </div>
-</form>
-
-<div>
-    <a asp-action="Index">Back to List</a>
+    </form>
 </div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/js/tags.js"></script>

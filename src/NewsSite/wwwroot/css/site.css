@@ -1,5 +1,4 @@
 ﻿body {
-    padding-top: 50px;
     padding-bottom: 20px;
 }
 
@@ -9,7 +8,6 @@
     padding-left: 15px;
     padding-right: 15px;
 }
-
 
 /* Carousel */
 .carousel-caption p {
@@ -41,4 +39,37 @@
   .carousel-caption {
     display: none
   }
+}
+
+.tagItem {
+        border: solid 1px #ccc;
+        padding: 10px;
+        margin-right: 10px;
+        margin-bottom: 10px;
+        display: inline-block;
+        font-weight: bold;
+    }
+.mediakitFileWrapper {
+        height:475px;
+        width: 32%;
+        float: left;
+        margin-bottom: 2%;
+        border:solid 1px #cccccc;
+        padding:10px;
+    }
+#mediaKitFiles div:nth-child(3n-1)  {
+        margin-left:2%;
+        margin-right:2%;
+    }
+    .mediakitFileWrapper img {
+        max-height:200px;
+        margin:0 auto;
+    }
+
+    .mediakitFileWrapper p {
+       margin-top: 10px;
+    }
+
+.error {
+    display:none;
 }

@@ -11,6 +11,6 @@ namespace NewsSite.Models
         [Display(Name ="Usage Count")]
         public int UsageCnt { get; set; }
         public List<Article> Articles { get; set; }
-        public List<MediaKitFile> MediaKitFiles { get; set; }
+        public List<MediaKitFileViewModel> MediaKitFiles { get; set; }
     }
 }

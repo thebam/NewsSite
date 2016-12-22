@@ -4,7 +4,7 @@
     ViewData["Title"] = "Index";
 }
 
-<h2>Tags</h2>
+<h1>Tags</h1>
 
 <p>
     <a class="btn btn-success" asp-action="Create">Create New</a>
@@ -12,20 +12,21 @@
 
 @foreach (var item in Model)
 {
+    <div class="tagItem">
+        <p>
+            @if (item.Enabled == true)
+            {
+                <i class="glyphicon glyphicon glyphicon-check"></i>
+            }
+            else
+            {
+                <i class="glyphicon glyphicon glyphicon-minus-sign"></i>
+            }
 
-    <div class="btn btn-default btn-lg" type="button">
-        @Html.DisplayFor(modelItem => item.TagName) <span title="usage counter" class="badge">@Html.DisplayFor(modelItem => item.UsageCnt)</span> <br/>
-
-        @if (item.Enabled == true)
-        {
-        <i class="glyphicon glyphicon glyphicon-check"></i>
-        }
-        else
-        {
-        <i class="glyphicon glyphicon glyphicon-minus-sign"></i>
-        }
-        &nbsp;<a title="edit" class="btn btn-sm btn-info" asp-action="Edit" asp-route-id="@item.TagId"><i class="glyphicon glyphicon glyphicon-pencil"></i></a>
-        <a title="delete" class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.TagId"><i class="glyphicon glyphicon glyphicon-trash"></i></a>
-    </div>
-    
+            @Html.DisplayFor(modelItem => item.TagName) <span title="usage counter" class="badge">@Html.DisplayFor(modelItem => item.UsageCnt)</span>
+        </p>
+        
+        <a title="edit" class="btn btn-sm btn-info" asp-action="Edit" asp-route-id="@item.TagId"><i class="glyphicon glyphicon-pencil"></i></a>
+        <a title="delete" class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.TagId"><i class="glyphicon glyphicon-trash"></i></a>
+    </div>   
 }

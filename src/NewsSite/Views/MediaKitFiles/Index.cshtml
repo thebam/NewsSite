@@ -3,27 +3,7 @@
 @{
     ViewData["Title"] = "Index";
 }
-<style>
-    .mediakitFileWrapper {
-        height: 500px;
-        width: 30%;
-        float: left;
-        margin-top: 1%;
-        margin-left: 1%;
-        border: solid 1px #ccc;
-        padding: 15px;
-    }
-
-        .mediakitFileWrapper img {
-            max-height: 200px;
-            margin: 0 auto;
-        }
-
-        .mediakitFileWrapper p {
-            margin-top: 10px;
-        }
-</style>
-<h2>Media Kit Files</h2>
+<h1>Media Kit Files</h1>
 
 <p>
     <a class="btn btn-success" asp-action="Create">Create New</a>
@@ -36,8 +16,8 @@
         <div class="mediakitFileWrapper">
             @Html.Raw(mediaKitFile.IconURL)
             <p>
-                <a class="btn btn-sm btn-info" asp-action="Edit" asp-route-id="@mediaKitFile.MediaKitFileId">Edit</a>
-                <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@mediaKitFile.MediaKitFileId">Delete</a>
+                <a title="edit" class="btn btn-sm btn-info" asp-action="Edit" asp-route-id="@mediaKitFile.MediaKitFileId"><i class="glyphicon glyphicon-pencil"></i></a>
+                <a title="delete" class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@mediaKitFile.MediaKitFileId"><i class="glyphicon glyphicon-trash"></i></a>
                 <br />
                 @mediaKitFile.Description<br />
                 &copy; @mediaKitFile.CopyrightDate.ToString("yyyy")<br/>

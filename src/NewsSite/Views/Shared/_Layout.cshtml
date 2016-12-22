@@ -1,8 +1,10 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="//www.savannahstate.edu/images/savannah_state_university_favicon.png">
     <title>@ViewData["Title"] - NewsSite</title>
 
     <environment names="Development">
@@ -15,55 +17,443 @@
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
     </environment>
+
+
+    <link href='//fonts.googleapis.com/css?family=Roboto+Condensed:300,400|Roboto:400,300,700,500' rel='stylesheet' type='text/css' />
+    <link href="//www.savannahstate.edu/styles/bootstrap-combined.min.css" rel="stylesheet" type="text/css" />
+    <link href="//www.savannahstate.edu/styles/ssu-main.min.css" rel="stylesheet" type="text/css" />
+    <link href="//www.savannahstate.edu/styles/social-stream.min.css" rel="stylesheet" type="text/css" />
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/picturefill/2.3.1/picturefill.min.js"></script>
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+            <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
 </head>
 <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
+    <!--begin header/nav/social media/search/utility nav-->
+    <header>
+        <nav class="navbar main-navbar" role="navigation">
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <a href="http://www.savannahstate.edu">
+                    <img class="logo" src="//www.savannahstate.edu/images/savannah_state_university_logo.jpg" alt="Savannah State University Official Logo" />
+                </a>
+                <!--begin mobile menu button-->
+                <button id="main-mobile-toggle" type="button" class="navbar-toggle" data-toggle="collapse" data-target=".top-nav">
                     <span class="sr-only">Toggle navigation</span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
                 </button>
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">NewsSite</a>
+                <!--end mobile menu button-->
             </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Articles" asp-action="Index">Articles</a></li>
-                    <li><a asp-area="" asp-controller="Tags" asp-action="Index">Tags</a></li>
-                    <li><a asp-area="" asp-controller="MediaKitFiles" asp-action="Index">Media Kit Files</a></li>
-                    <li><a asp-area="" asp-controller="Owners" asp-action="Index">Media Authors</a></li>
+            <div class="container-fluid" id="nav-container">
+                <div class="collapse navbar-collapse top-nav">
+                    <div id="main-menu-bg">
+                        <div class="nav-center max-layout-width">
+                            <!--begin main navigation-->
+                            <ul class="nav navbar-nav yamm" id="main-menu">
+                                <li class="dropdown remove-default-padding" id="search-wrapper">
+                                    <div id="search">
+                                        <div class="navbar-form" role="search">
+                                            <div class="input-group" style="width:100%;">
+                                                <input type="text" class="form-control" placeholder="Search people, places, events and topics" autocomplete="off" name="q" title="search" id="srch-term" />
+
+
+                                                <div class="input-group-btn">
+                                                    <button class="btn btn-default" type="submit" value="submit" id="srch-submit-btn"><i class="glyphicon glyphicon-search"></i><span>submit search</span></button>
+                                                </div>
+                                            </div>
+                                            <div class="search-results-container"></div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="dropdown">
+                                    <div class="clearfix"></div>
+                                    <a href="/prospective-student/about.shtml" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">About SSU</a>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li><a href="http://www.savannahstate.edu/prospective-student/whyssu.shtml">Why SSU</a></li>
+                                        <li><a href="http://www.savannahstate.edu/prospective-student/visitssu.shtml">Visiting SSU</a></li>
+                                        <li><a href="http://www.savannahstate.edu/prospective-student/history.shtml">History of SSU</a></li>
+                                        <li><a href="http://www.savannahstate.edu/faculty-staff/admin.shtml">Administration</a></li>
+                                        <li><a href="http://www.savannahstate.edu/presidents-office/index.shtml">Mission &amp; Vision</a></li>
+                                        <li><a href="http://www.savannahstate.edu/presidents-office/policies.shtml">Policies</a></li>
+                                        <li><a href="http://www.savannahstate.edu/places/">Places</a></li>
+                                    </ul>
+                                </li>
+                                <li class="dropdown">
+                                    <a href="/prospective-student/" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Admissions</a>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li><a href="https://gafutures.xap.com/College_Planning/Applications_and_Transcripts/Apply_to_College/Apply_to_College.aspx" target="_blank">Apply Now</a></li>
+                                        <li><a href="http://www.savannahstate.edu/prospective-student/undergrad-new-tigers.shtml">High School Students</a></li>
+                                        <li><a href="http://www.savannahstate.edu/prospective-student/undergrad-transfer-tigers.shtml">Transfer Students</a></li>
+                                        <li><a href="http://www.savannahstate.edu/graduate/">Graduate Students</a></li>
+                                        <li><a href="http://www.savannahstate.edu/prospective-student/undergrad-international-tigers.shtml">International Students</a></li>
+                                        <li><a href="http://www.savannahstate.edu/prospective-student/undergrad.shtml">Undergraduate</a></li>
+                                        <li><a href="http://www.savannahstate.edu/prospective-student/undergrad-military-tigers.shtml">Military</a></li>
+                                        <li><a href="http://www.savannahstate.edu/elearning/index.shtml">Online Programs</a></li>
+                                        <li><a href="http://www.savannahstate.edu/enrollment-mgmt/">Enrollment Management</a></li>
+                                        <li><a href="http://www.savannahstate.edu/fiscal-affairs/financial-aid.shtml">Financial Aid</a></li>
+                                    </ul>
+                                </li>
+                                <li class="dropdown">
+                                    <a href="/academic-affairs/" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Academics</a>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li><a href="http://www.savannahstate.edu/prospective-student/colleges.shtml">Colleges &amp; Schools</a></li>
+                                        <li><a href="https://savstate.view.usg.edu/d2l/login" target="_blank">D2L Login</a></li>
+                                        <li><a href="http://www.savannahstate.edu/academic-affairs/academic-info.shtml">Academic Information</a></li>
+                                        <li><a href="http://www.savannahstate.edu/academic-affairs/international-ed.shtml">International Education Center</a></li>
+                                        <li><a href="http://www.savannahstate.edu/academic-affairs/catalog.shtml">Catalogs</a></li>
+                                        <li><a href="http://www.savannahstate.edu/cas/index.shtml">Center for Academic Success</a></li>
+                                        <li><a href="http://www.savannahstate.edu/academic-affairs/calendars.shtml">Academic Calendar</a></li>
+                                        <li><a href="http://library.savannahstate.edu/">Library</a></li>
+                                        <li><a href="http://www.savannahstate.edu/student-affairs/class-sched.shtml">Class Schedules</a></li>
+
+                                    </ul>
+                                </li>
+                                <li class="dropdown">
+                                    <a target="_blank" href="http://ssuathletics.com/" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Athletics</a>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li><a href="http://www.ssuathletics.com/index.aspx?tab=football&path=football" target="_blank">Football</a></li>
+                                        <li><a href="http://www.ssuathletics.com/index.aspx?tab=basketball&path=mbball" target="_blank">Basketball (Men's)</a></li>
+                                        <li><a href="http://www.ssuathletics.com/index.aspx?tab=baseball&path=baseball" target="_blank">Baseball</a></li>
+                                        <li><a href="http://www.ssuathletics.com/" target="_blank">All Varsity Sports</a></li>
+                                        <li><a href="http://www.ssuathletics.com/index.aspx?tab=volleyball&path=wvball" target="_blank">Volleyball</a></li>
+                                        <li><a href="http://www.ssuathletics.com/index.aspx?tab=basketball2&path=wbball" target="_blank">Basketball (Women's)</a></li>
+                                        <li><a href="http://www.ssuathletics.com/index.aspx?tab=softball&path=softball" target="_blank">Softball</a></li>
+
+                                    </ul>
+                                </li>
+                                <li class="dropdown">
+                                    <a href="http://www.savannahstate.edu/university-advancement/why-give.shtml" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Campus Life</a>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li><a href="http://www.savannahstate.edu/faculty-staff/public-safety/">Safety &amp; Security</a></li>
+                                        <li><a href="http://www.tigersroar.com/" target="_blank">Tiger's Roar</a></li>
+                                        <li><a href="http://www.savannahstate.edu/academic-affairs/whcj.shtml">WHCJ 90.3 FM</a></li>
+                                        <li><a href="http://www.savannahstate.edu/prospective-student/clubs.shtml">Clubs &amp; Organizations</a></li>
+                                        <li><a href="http://www.savannahstate.edu/student-affairs/sports-wellness.shtml">Recreation &amp; Wellness</a></li>
+                                        <li><a href="http://www.savannahstate.edu/student-affairs/counseling.shtml">Counseling</a></li>
+                                        <li><a href="http://www.savannahstate.edu/student-affairs/office-of-disability-services-intro.shtml">Disability Services</a></li>
+                                        <li><a href="http://www.savannahstate.edu/prospective-student/vetaffairs.shtml">Veterans Affairs</a></li>
+                                        <li><a href="http://www.savannahstate.edu/student-affairs/health-services.shtml">Student Health Services</a></li>
+                                        <li><a href="http://www.savannahstate.edu/fiscal-affairs/dining-services.shtml">Dining Services</a></li>
+                                        <li><a href="http://www.savannahstate.edu/news/">News</a></li>
+                                        <li><a href="http://www.savannahstate.edu/events/">Events</a></li>
+                                        <li><a href="https://simba.savannahstate.edu/students/alert.aspx">Emergency Information</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                            <!--end main navigation-->
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <nav class="navbar" role="navigation">
+            <div class="collapse navbar-collapse nav-center max-layout-width top-nav" id="utility-nav-container">
+                <!--begin utility navigation-->
+
+                <ul class="nav navbar-nav" id="utility-nav">
+                    <li id="prosective-students" class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Prospective Students</a>
+                        <ul class="dropdown-menu max-layout-width yamm-fw">
+                            <li>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <ul>
+                                            <li><a href="https://gafutures.xap.com/College_Planning/Applications_and_Transcripts/Apply_to_College/Apply_to_College.aspx">Apply Free to SSU (Undergraduate)</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-4 left-divider right-divider">
+                                        <ul>
+                                            <li><a href="http://www.savannahstate.edu/prospective-student/">Admissions</a></li>
+                                            <li><a href="https://simba.savannahstate.edu/students/adm-status.aspx">Application Status</a></li>
+                                            <li><a href="http://www.savannahstate.edu/prospective-student/degrees.shtml">Degrees</a></li>
+                                            <li><a href="http://www.savannahstate.edu/fiscal-affairs/financial-aid.shtml">Financial Aid</a></li>
+                                            <li><a href="http://www.savannahstate.edu/fiscal-affairs/bursar-tuition.shtml">Tuition &amp; Fees</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <ul>
+                                            <li><a href="http://www.savannahstate.edu/prospective-student/visitssu.shtml">Visiting SSU</a></li>
+                                            <li><a href="http://www.savannahstate.edu/prospective-student/campuslife.shtml">Campus Life</a></li>
+                                            <li><a href="http://www.savannahstate.edu/student-affairs/residential-services.shtml">Housing</a></li>
+                                            <li><a href="http://www.savannahstate.edu/academic-affairs/testing.shtml">Testing</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <ul>
+                                            <li>
+                                                <a href="http://www.savannahstate.edu/prospective-student/">ALL PROSPECTIVE STUDENT RESOURCES</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                    <li id="current-students" class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Current Students</a>
+                        <ul class="dropdown-menu max-layout-width yamm-fw">
+                            <li>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <ul>
+                                            <li><a href="http://www.savannahstate.edu/student-affairs/paws.shtml">PAWS</a></li>
+                                            <li><a href="http://simba.savannahstate.edu/my.ssu/">Grades</a></li>
+
+                                            <li><a href="https://simba.savannahstate.edu/students/e-mail.aspx">Access your Email</a></li>
+                                            <li><a href="http://library.savannahstate.edu">Library</a></li>
+                                            <li><a href="http://www.savannahstate.edu/fiscal-affairs/dining-services.shtml">Dining Services</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-4 left-divider right-divider">
+                                        <ul>
+
+                                            <li><a href="http://www.savannahstate.edu/fiscal-affairs/bursar.shtml">Bursar's Office</a></li>
+                                            <li><a href="http://www.savannahstate.edu/student-affairs/registrars-office.shtml">Registrar's Office</a></li>
+                                            <li><a href="http://www.savannahstate.edu/fiscal-affairs/financial-aid.shtml">Financial Aid</a></li>
+                                            <li><a href="http://www.savannahstate.edu/student-affairs/residential-services.shtml">Housing</a></li>
+                                            <li><a href="http://www.savannahstate.edu/fiscal-affairs/parking.shtml">Parking and Transportation</a></li>
+                                            <li><a href="http://www.bkstr.com/savannahstatestore/home" target="_blank">Bookstore</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <ul>
+                                            <li><a href="/calendar">SSU Calendar</a></li>
+                                            <li><a href="https://savstate.view.usg.edu/" target="_blank">D2L Login</a></li>
+                                            <li><a href="http://www.savannahstate.edu/student-affairs/docs/SSU_Student_Handbook.pdf">Student Handbook</a></li>
+                                            <li><a href="http://www.savannahstate.edu/prospective-student/clubs.shtml">Clubs &amp; Organizations</a></li>
+                                            <li><a href="http://www.savannahstate.edu/academic-affairs/testing.shtml">Testing</a></li>
+                                            <li><a href="http://qep.savannahstate.edu/" target="_blank">Quality Enhancement Plan</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <ul>
+                                            <li>
+                                                <a href="http://www.savannahstate.edu/current-students/">ALL CURRENT STUDENT RESOURCES</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                    <li id="alumni" class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Alumni</a>
+                        <ul class="dropdown-menu max-layout-width yamm-fw">
+                            <li>
+                                <div class="row">
+                                    <div class="col-md-6 right-divider">
+                                        <ul>
+                                            <li><a href="http://www.savannahstate.edu/university-advancement/alumni-relations.shtml">Alumni Relations</a></li>
+                                            <li><a href="https://simba.savannahstate.edu/forms/development/contact_update.aspx" target="_blank">Update Your Alumni Profile</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <ul>
+                                            <li><a target="_blank" href="http://ssunaa.org/">National Alumni Association</a></li>
+                                            <li><a href="http://www.savannahstate.edu/student-affairs/request_transcript.shtml">Request a Transcript</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                    <li id="donors" class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Donors</a>
+                        <ul class="dropdown-menu max-layout-width yamm-fw">
+                            <li>
+                                <div class="row">
+                                    <div class="col-md-6 right-divider">
+                                        <ul>
+                                            <li>
+                                                <a href="https://give.savannahstate.edu/donate" target="_blank">DONATE NOW</a>
+                                            </li>
+                                            <li>
+                                                <a href="http://www.savannahstate.edu/university-advancement/why-give.shtml">Why Give?</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <ul>
+                                            <li><a href="http://www.savannahstate.edu/university-advancement/foundations.shtml">SSU Foundation</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
                 </ul>
-                @await Html.PartialAsync("_LoginPartial")
+                <!--end utility navigation-->
+
             </div>
+        </nav>
+    </header>
+    <!--end header/nav/social media/search/utility nav-->
+    <div class="landing-page-hero">
+    </div>
+    <div class="breadCrumb-container">
+        <div class="breadCrumbs">
+            <a href="http://www.savannahstate.edu/">Home</a> > News
         </div>
     </div>
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; 2016 - NewsSite</p>
-        </footer>
-    </div>
 
-    <environment names="Development">
-        <script src="~/lib/jquery/dist/jquery.js"></script>
-        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
-        <script src="~/js/site.js" asp-append-version="true"></script>
-    </environment>
-    <environment names="Staging,Production">
-        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
-                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
-                asp-fallback-test="window.jQuery">
-        </script>
-        <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.6/bootstrap.min.js"
-                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
-                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal">
-        </script>
-        <script src="~/js/site.min.js" asp-append-version="true"></script>
-    </environment>
 
-    @RenderSection("scripts", required: false)
+
+
+   
+    
+    <section id="main-content">
+        <div class="leftMenuContainer col-md-3 col-sm-3">
+            <nav>
+                <div class="pageMenu">
+                    <span class="glyphicon glyphicon-menu-down"></span>&nbsp;&nbsp;&nbsp;&nbsp;PAGE MENU
+                </div>
+                <ul class="leftMenu">
+                    <li class="leftMenuTierOne"><a asp-area="" asp-controller="Home" asp-action="Index">News</a></li>
+                    <li class="leftMenuTierTwo"><a asp-area="" asp-controller="Articles" asp-action="Index">Articles</a></li>
+                    <li class="leftMenuTierTwo"><a asp-area="" asp-controller="Tags" asp-action="Index">Tags</a></li>
+                    <li class="leftMenuTierTwo"><a asp-area="" asp-controller="MediaKitFiles" asp-action="Index">Media Kit Files</a></li>
+                    <li class="leftMenuTierTwo"><a asp-area="" asp-controller="Owners" asp-action="Index">Media Authors</a></li>
+                </ul>
+            </nav>
+            <script src="//www.savannahstate.edu/scripts/leftMenu.min.js"></script>
+        </div>
+        <div class="content-inner col-md-9 col-sm-9">
+            @await Html.PartialAsync("_LoginPartial")
+            @RenderBody()
+        </div>
+        <div class="clearfix"></div>
+</section>
+    <footer>
+        <div class="container" id="footer-container">
+            <div id="footer-upper-wrapper">
+                <div id="footer-upper" class="max-layout-width">
+                    <div class="col-md-4 col-sm-4 remove-default-padding">
+                        <p>SAVANNAH STATE UNIVERSITY </p>
+                        <p class="address">
+                            3219 College St.<br />
+                            Savannah, GA 31404<br />
+                            (912) 358-4338
+                        </p>
+
+                    </div>
+                    <div class="col-md-4 col-sm-4 remove-default-padding">
+                        <p>
+                            <a href="https://www.savannahstate.edu/map/">
+                                VIEW CAMPUS MAP
+                                <br />
+                                <img id="campusMap" src="https://www.savannahstate.edu/images/map-hi_res.jpg" alt="campus map">
+                            </a>
+                        </p>
+                        <p><a href="http://www.savannahstate.edu/images/SSU-campus-map-black&white.jpg" target="_blank">download campus map</a></p>
+                    </div>
+                    <div class="col-md-4 col-sm-4 remove-default-padding">
+                        <div class="social">
+                            <div class="social-item ">
+                                <a href="https://www.facebook.com/savannahstate" class="facebook-icon" target="_blank"><span>Facebook</span></a>
+                            </div>
+                            <div class="social-item ">
+                                <a href="https://twitter.com/savannahstate" class="social-item twitter-icon" target="_blank"><span>Twitter</span></a>
+                            </div>
+                            <div class="social-item ">
+                                <a href="https://www.instagram.com/savannahstate/" class="social-item instagram-icon" target="_blank"><span>Instagram</span></a>
+                            </div>
+                            <div class="social-item ">
+                                <a href="https://www.linkedin.com/edu/savannah-state-university-18184" class="social-item linkedin-icon" target="_blank"><span>LinkedIn</span></a>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+            <div id="footer-middle-wrapper">
+                <div id="footer-middle" class="max-layout-width">
+                    <h3>Links &amp; Resources</h3>
+                    <ul>
+                        <li><a href="https://give.savannahstate.edu/">Alumni &amp; Friends</a></li>
+                        <li><a href="http://www.savannahstate.edu/events/index.shtml">SSU Calendar</a></li>
+                        <li><a href="http://www.savannahstate.edu/current-students/">Current Students</a></li>
+                        <li><a href="http://www.savannahstate.edu/faculty-staff/human-resources/">Careers at SSU</a></li>
+                        <li><a href="http://irp.savannahstate.edu/IRP/HEOA.html" target="_blank">Consumer Information</a></li>
+                        <li><a href="http://www.savannahstate.edu/student-affairs/paws.shtml">PAWS</a></li>
+                        <li><a href="http://www.savannahstate.edu/elearning/index.shtml">eLearning</a></li>
+                        <li><a href="http://www.savannahstate.edu/faculty-staff/">Faculty &amp; Staff</a></li>
+                        <li><a href="https://simba.savannahstate.edu/students/alert.aspx">Emergency Information</a></li>
+                        <li><a href="http://www.savannahstate.edu/faculty-staff/offices.shtml">Departments &amp; Offices</a></li>
+                        <li><a href="https://savannahstate.alertline.com/">Ethics Hotline</a></li>
+                        <li><a href="http://www.savannahstate.edu/faculty-staff/research.shtml">Research</a></li>
+                        <li><a href="https://simba.savannahstate.edu/directory/">Directory</a></li>
+                        <li><a href="http://www.savannahstate.edu/student-affairs/office-of-disability-services-intro.shtml">Disability Services</a></li>
+                        <li><a href="http://www.savannahstate.edu/student-affairs/counseling.shtml">Counseling</a></li>
+                        <li><a href="https://simba.savannahstate.edu/exit-survey/(S(tuyydsbdz3fitzn22jbyo0mg))/Default.aspx" target="_blank">Teaching Effectiveness Survey</a></li>
+                        <li><a href="http://www.savannahstate.edu/academic-affairs/confucius-institute.shtml">Confucius Institute</a></li>
+                        <li><a href="http://www.savannahstate.edu/presidents-office/strategic-plan.shtml">Strategic Plan</a></li>
+                        <li><a href="http://savannahgraduates.com/" target="_blank"><img style="background-color:white;padding:5px;margin-top:5px;" src="//www.savannahstate.edu/images/homepage/savannah-graduates-logo.png" width="100px"></a></li>
+                    </ul>
+                    <a style="float:right;" id="errorReport" href="mailto:web@savannahstate.edu?subject=savannahstate.edu error">submit questions & issues</a>
+                </div>
+            </div>
+            <div id="footer-lower-wrapper">
+                <div id="footer-lower" class="max-layout-width">
+                    <p>
+                        All Rights Reserved &copy;
+                        <script type="text/javascript">
+                            var theDate = new Date()
+                            document.write(theDate.getFullYear())
+                        </script>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+      
+    <script src="//www.savannahstate.edu/scripts/serviceUtilities.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="//www.savannahstate.edu/scripts/suggested-search.min.js"></script>
+    <script src="//www.savannahstate.edu/scripts/analytics.js"></script>
+    <script src="//www.savannahstate.edu/scripts/main-ssu.min.js"></script>
+    <script type="text/javascript">
+        var sAId = "763";
+        var sCId = "5411";
+
+        (function () {
+            function async_load() {
+                var s = document.createElement('script'); s.type = 'text/javascript';
+                s.src = (('https:' == document.location.protocol) ? "https://ssl.spectate.com" : "http://cdn.spectate.com") + "/s.js";
+                var c = document.getElementsByTagName('script')[0]; c.parentNode.insertBefore(s, c);
+            }
+            if (window.attachEvent) { window.attachEvent('onload', async_load); }
+            else { window.addEventListener('load', async_load, false); }
+        })();
+    </script>
+        <environment names="Development">
+            <script src="~/lib/jquery/dist/jquery.js"></script>
+            <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+            <script src="~/js/site.js" asp-append-version="true"></script>
+        </environment>
+        <environment names="Staging,Production">
+            <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
+                    asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+                    asp-fallback-test="window.jQuery">
+            </script>
+            <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.6/bootstrap.min.js"
+                    asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
+                    asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal">
+            </script>
+            <script src="~/js/site.min.js" asp-append-version="true"></script>
+        </environment>
+
+        @RenderSection("scripts", required: false)
 </body>
 </html>

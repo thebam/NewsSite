@@ -76,7 +76,6 @@ $(document).ready(function () {
                 data.append(files[i].name, files[i]);
             }
             var description = $("#Description").val();
-            var mediaType = $("#MediaType").val();
             var url = $("#url").val();
             var ownerId = $("#OwnerId").val();
             var fileTags = $("#FileTags").val();
@@ -98,7 +97,6 @@ $(document).ready(function () {
 
 
             data.append("description",description);
-            data.append("mediaType", mediaType);
             data.append("url", url);
             data.append("ownerId", ownerId);
             data.append("FileTags", fileTags);
@@ -121,46 +119,171 @@ $(document).ready(function () {
                 dataType:"json",
                 data: data,
                 success: function (message) {
+                    $(".error").hide();
                     var temp = JSON.stringify(message);
-                    
                     var responseData = JSON.parse(temp);
-                    $("#fileModal").modal('hide');
-                    if ($("#SelectedFiles").length>0) {
-                        if (responseData["mediaType"] == "image") {
-                            $("<img class=\"file-btn\" data-tag=\"" + responseData["mediaKitFileId"] + "\" src=\"/mediakitfiles/" + responseData["url"] + "\" />").appendTo("#SelectedFiles");
+                    if (!responseData["status"]) {
+                        $("#fileModal").modal('hide');
+                        $('body').removeClass('modal-open');
+                        $('.modal-backdrop').remove();
+                        if ($("#SelectedFiles").length > 0) {
+                            if (responseData["mediaType"] == "image") {
+                                $("<img class=\"file-btn\" data-tag=\"" + responseData["mediaKitFileId"] + "\" src=\"/mediakitfiles/" + responseData["url"] + "\" />").appendTo("#SelectedFiles");
+                            } else {
+                                $("<div class=\"btn btn-default file-btn\" data-tag=\"" + responseData["mediaKitFileId"] + "\">" + responseData["url"] + "</div>").appendTo("#SelectedFiles");
+                            }
+                            $("#OwnerId").val("");
                         } else {
-                            $("<div class=\"btn btn-default file-btn\" data-tag=\"" + responseData["mediaKitFileId"] + "\">" + responseData["url"] + "</div>").appendTo("#SelectedFiles");
+                            if ($("#OwnerId").attr('type') == 'hidden') {
+                                var tags = "";
+                                var tempDate = new Date(responseData["copyrightDate"] + "Z");
+                                for (var x = 0; x < responseData["tagNames"].length; x++) {
+                                    tags += "<div class=\"btn btn-sm btn-default\">" + responseData["tagNames"][x]["name"] + "</div>"
+                                }
+                                $("<div class=\"mediakitFileWrapper\">" + responseData["iconURL"] + "<p><a title=\"download\" class=\"btn btn-sm btn-success\" href=\"~/mediakitfiles/" + responseData["url"] + "\" target=\"_blank\"><i class=\"glyphicon glyphicon-cloud-download\"></i></a> <a title=\"edit\" class=\"btn btn-sm btn-info\" href=\"~/MediaKitFiles/Edit/" + responseData["mediaKitFileId"] + "\"><i class=\"glyphicon glyphicon-pencil\"></i></a> <a  title=\"delete\" class=\"btn btn-sm btn-danger\" href=\"~/MediaKitFiles/Delete/" + responseData["mediaKitFileId"] + "\"><i class=\"glyphicon glyphicon-trash\"></i></a><br/>" + responseData["description"] + "<br/>&copy; " + tempDate.getFullYear() + "<hr/><strong>tags</strong><br/>" + tags + "</p></div>").appendTo("#mediaKitFiles");
+                            } else {
+                                window.location.href = '../../MediaKitFiles';
+                            }
                         }
-                        $("#OwnerId").val("");
+                        $("#ArticleMediaKitFiles").val($("#ArticleMediaKitFiles").val() + responseData["mediaKitFileId"] + ",");
+
+                        $("#files").val("");
+                        $("#Description").val("");
+                       
+                        $("#url").val("");
+
+                        $("#FileTags").val(",");
+
+                        $("#ownerName").val("");
+                        $("#address").val("");
+                        $("#email").val("");
+                        $("#phone").val("");
+                        $("#socialMedia").val("");
+                        $("#website").val("");
+                        $("#altText").val("");
+                        $("#copyrightDate").val("");
+                        $("#newOwner").hide();
+                        $("#openNewOwner").show();
+                        $("#OwnerId").show();
+                        resetSelections("#SelectedFileTags .btn", "UnselectedFileTags");
                     } else {
-                        var tags = "";
-                        var tempDate = new Date(responseData["copyrightDate"]+"Z");
-                        for (var x = 0; x < responseData["tagNames"].length; x++) {
-                            tags += "<div class=\"btn btn-sm btn-default\">" + responseData["tagNames"][x]["name"] + "</div>"
-                        }
-                        $("<div class=\"mediakitFileWrapper\">" + responseData["iconURL"] + "<p><a class=\"btn btn-sm btn-success\" href=\"~/mediakitfiles/" + responseData["url"] + "\" target=\"_blank\">download</a> <a class=\"btn btn-sm btn-info\" href=\"~/MediaKitFiles/Edit/" + responseData["mediaKitFileId"] + "\">edit file</a> <a class=\"btn btn-sm btn-danger\" href=\"~/MediaKitFiles/Delete/" + responseData["mediaKitFileId"] + "\">delete file</a><br/>" + responseData["description"] + "<br/>&copy; " + tempDate.getFullYear() + "<hr/><strong>tags</strong><br/>" + tags + "</p></div>").appendTo("#mediaKitFiles");
+                        $("#" + responseData["element"] + "Error").show();
                     }
-                    $("#ArticleMediaKitFiles").val($("#ArticleMediaKitFiles").val() + responseData["mediaKitFileId"] + ",");
+                },
+                error: function () {
+                    alert("There was error uploading files!");
+                }
+            });
+        });
 
-                    $("#files").val("");
-                    $("#Description").val("");
-                    $("#MediaType").val("");
-                    $("#url").val("");
-                    
-                    $("#FileTags").val(",");
 
-                    $("#ownerName").val("");
-                    $("#address").val("");
-                    $("#email").val("");
-                    $("#phone").val("");
-                    $("#socialMedia").val("");
-                    $("#website").val("");
-                    $("#altText").val("");
-                    $("#copyrightDate").val("");
-                    $("#newOwner").hide();
-                    $("#openNewOwner").show();
-                    $("#OwnerId").show();
-                    resetSelections("#SelectedFileTags .btn", "UnselectedFileTags");
+        $("#editMediaFile").click(function (evt) {
+            var fileUpload = $("#files").get(0);
+            var files = fileUpload.files;
+            var data = new FormData();
+            for (var i = 0; i < files.length ; i++) {
+                data.append(files[i].name, files[i]);
+            }
+            var id = $("#MediaKitFileId").val();
+            var enabled;
+            if ($('#Enabled').is(':checked')) {
+                enabled = "true";
+            } else {
+                enabled = "false";
+            }
+            
+
+            var description = $("#Description").val();
+            var url = $("#URL").val();
+            var ownerId = $("#OwnerId").val();
+            var fileTags = $("#FileTags").val();
+            var copyrightDate = $("#CopyrightDate").val();
+            var altText = $("#AltText").val();
+            var ownerName = $("#ownerName").val();
+            if (ownerName) {
+                var address = $("#address").val();
+                var email = $("#email").val();
+                var phone = $("#phone").val();
+                var socialMedia = $("#socialMedia").val();
+                var website = $("#website").val();
+            } else {
+                ownerName = "";
+            }
+
+
+
+
+            data.append("id", id);
+            data.append("enabled", enabled);
+            data.append("description", description);
+            data.append("url", url);
+            data.append("ownerId", ownerId);
+            data.append("FileTags", fileTags);
+            data.append("copyrightDate", copyrightDate);
+            data.append("altText", altText);
+            if (ownerName) {
+                data.append("ownerName", ownerName);
+                data.append("address", address);
+                data.append("email", email);
+                data.append("phone", phone);
+                data.append("socialMedia", socialMedia);
+                data.append("website", website);
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "../../MediaKitFiles/EditMediaKitFile",
+                contentType: false,
+                processData: false,
+                dataType: "json",
+                data: data,
+                success: function (message) {
+                    $(".error").hide();
+                    var temp = JSON.stringify(message);
+                    var responseData = JSON.parse(temp);
+                    if (!responseData["status"]) {
+                        if ($("#SelectedFiles").length > 0) {
+                            if (responseData["mediaType"] == "image") {
+                                $("<img class=\"file-btn\" data-tag=\"" + responseData["mediaKitFileId"] + "\" src=\"/mediakitfiles/" + responseData["url"] + "\" />").appendTo("#SelectedFiles");
+                            } else {
+                                $("<div class=\"btn btn-default file-btn\" data-tag=\"" + responseData["mediaKitFileId"] + "\">" + responseData["url"] + "</div>").appendTo("#SelectedFiles");
+                            }
+                            $("#OwnerId").val("");
+                        } else {
+                            if ($("#OwnerId").attr('type') == 'hidden') {
+                                var tags = "";
+                                var tempDate = new Date(responseData["copyrightDate"] + "Z");
+                                for (var x = 0; x < responseData["tagNames"].length; x++) {
+                                    tags += "<div class=\"btn btn-sm btn-default\">" + responseData["tagNames"][x]["name"] + "</div>"
+                                }
+                                $("<div class=\"mediakitFileWrapper\">" + responseData["iconURL"] + "<p><a title=\"download\" class=\"btn btn-sm btn-success\" href=\"~/mediakitfiles/" + responseData["url"] + "\" target=\"_blank\"><i class=\"glyphicon glyphicon-cloud-download\"></i></a> <a title=\"edit\" class=\"btn btn-sm btn-info\" href=\"~/MediaKitFiles/Edit/" + responseData["mediaKitFileId"] + "\"><i class=\"glyphicon glyphicon-pencil\"></i></a> <a  title=\"delete\" class=\"btn btn-sm btn-danger\" href=\"~/MediaKitFiles/Delete/" + responseData["mediaKitFileId"] + "\"><i class=\"glyphicon glyphicon-trash\"></i></a><br/>" + responseData["description"] + "<br/>&copy; " + tempDate.getFullYear() + "<hr/><strong>tags</strong><br/>" + tags + "</p></div>").appendTo("#mediaKitFiles");
+                            } else {
+                                window.location.href = '../../MediaKitFiles';
+                            }
+                        }
+                        $("#ArticleMediaKitFiles").val($("#ArticleMediaKitFiles").val() + responseData["mediaKitFileId"] + ",");
+
+                        $("#files").val("");
+                        $("#Description").val("");
+                        $("#url").val("");
+
+                        $("#FileTags").val(",");
+
+                        $("#ownerName").val("");
+                        $("#address").val("");
+                        $("#email").val("");
+                        $("#phone").val("");
+                        $("#socialMedia").val("");
+                        $("#website").val("");
+                        $("#altText").val("");
+                        $("#copyrightDate").val("");
+                        $("#newOwner").hide();
+                        $("#openNewOwner").show();
+                        $("#OwnerId").show();
+                        resetSelections("#SelectedFileTags .btn", "UnselectedFileTags");
+                    } else {
+                        $("#" + responseData["element"] + "Error").show();
+                    }
                 },
                 error: function () {
                     alert("There was error uploading files!");
@@ -249,7 +372,8 @@ function checkFile() {
 
 function formatFileName(inputElement) {
     var tempString = $("#" + inputElement).val();
-    var outString = tempString.replace(/[`~!@#$%^&*()_|+\=?;:'",.<>\{\}\[\]\\\/]/gi, '');
+    var removeExt = tempString.substr(0, tempString.lastIndexOf('.')) || tempString;
+    var outString = removeExt.replace(/[`~!@#$%^&*()_|+\=?;:'",.<>\{\}\[\]\\\/]/gi, '');
     outString = outString.split(' ').join('-');
     $("#" + inputElement).val(outString);
 }

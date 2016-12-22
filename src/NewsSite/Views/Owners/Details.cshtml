@@ -3,27 +3,8 @@
 @{
     ViewData["Title"] = "Details";
 }
-<style>
-    .mediakitFileWrapper {
-        height:500px;
-        width: 30%;
-        float: left;
-        margin-top: 1%;
-        margin-left: 1%;
-        border:solid 1px #ccc;
-        padding:15px;
-    }
 
-    .mediakitFileWrapper img {
-        max-height:200px;
-        margin:0 auto;
-    }
-
-    .mediakitFileWrapper p {
-       margin-top: 10px;
-    }
-</style>
-<h2>@Html.DisplayFor(model => model.Name)</h2>
+<h1>@Html.DisplayFor(model => model.Name)</h1>
 
 <div>
     <dl class="dl-horizontal">
@@ -67,8 +48,8 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.OwnerId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a class="btn btn-default" asp-action="Edit" asp-route-id="@Model.OwnerId">Edit</a>
+    <a class="btn btn-default" asp-action="Index">Back to List</a>
 </div>
 <hr/>
 <h3>Media Kit Files</h3>
@@ -82,9 +63,9 @@
             <div class="mediakitFileWrapper">
                 @Html.Raw(mediaKitFile.IconURL)
                 <p>
-                    <a class="btn btn-sm btn-success" href="~/mediakitfiles/@mediaKitFile.URL" target="_blank">download</a>
-                    <a class="btn btn-sm btn-info" href="~/MediaKitFiles/Edit/@mediaKitFile.MediaKitFileId">edit file</a>
-                    <a class="btn btn-sm btn-danger" href="~/MediaKitFiles/Delete/@mediaKitFile.MediaKitFileId">delete file</a>
+                    <a title="download" class="btn btn-sm btn-success" href="~/mediakitfiles/@mediaKitFile.URL" target="_blank"><i class="glyphicon glyphicon-cloud-download"></i></a>
+                    <a title="edit" class="btn btn-sm btn-info" href="~/MediaKitFiles/Edit/@mediaKitFile.MediaKitFileId"><i class="glyphicon glyphicon-pencil"></i></a>
+                    <a title="delete" class="btn btn-sm btn-danger" href="~/MediaKitFiles/Delete/@mediaKitFile.MediaKitFileId"><i class="glyphicon glyphicon-trash"></i></a>
                     <br/>
                     @mediaKitFile.Description<br />
                     &copy; @mediaKitFile.CopyrightDate.ToString("yyyy")
@@ -113,60 +94,53 @@
                     <h3>Upload New File</h3>
                     <div class="form-horizontal">
                         <div class="form-group">
-                            <label class="col-md-2 control-label">File</label>
-                            <div class="col-md-10">
+                            <label class="col-md-3 control-label">File</label>
+                            <div class="col-md-9">
                                 <input type="file" id="files" multiple class="form-control" onchange="checkFile();" />
+                                <span id="filesError" class="text-danger error">File is required.</span>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-md-2 control-label">Filename</label>
-                            <div class="col-md-10">
+                            <label class="col-md-3 control-label">Filename</label>
+                            <div class="col-md-9">
                                 <input type="text" id="url" class="form-control" onchange="formatFileName('url');" />
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-md-2 control-label">Alt Text</label>
-                            <div class="col-md-10">
+                            <label class="col-md-3 control-label">Alt Text</label>
+                            <div class="col-md-9">
                                 <textarea id="altText" class="form-control"></textarea>
+                                <span id="altTextError" class="text-danger error">Alt text is required.</span>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-md-2 control-label">Caption</label>
-                            <div class="col-md-10">
+                            <label class="col-md-3 control-label">Caption</label>
+                            <div class="col-md-9">
                                 <textarea id="Description" class="form-control"></textarea>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-md-2 control-label">File Type</label>
-                            <div class="col-md-10">
-                                <select id="MediaType" class="form-control">
-                                    <option value="image">Image</option>
-                                    <option value="word">Word Document</option>
-                                    <option value="pdf">PDF</option>
-                                    <option value="spreadsheet">Spreadsheet</option>
-                                    <option value="ppt">Presentation</option>
-                                </select>
+                                <span id="descriptionError" class="text-danger error">Caption is required.</span>
                             </div>
                         </div>
                         
                         <input type="hidden" id="OwnerId" name="OwnerId" value="@Model.OwnerId" />
                         <div class="form-group">
-                            <label class="col-md-2 control-label">Copyright Date</label>
-                            <div class="col-md-10">
+                            <label class="col-md-3 control-label">Copyright Date</label>
+                            <div class="col-md-9">
                                 <input class="form-control" type="date" id="copyrightDate" name="copyrightDate" value="">
+                                <span id="copyrightDateError" class="text-danger error">Copyright date is required.</span>
                             </div>
                         </div>
                         
 
 
                         <div class="form-group">
-                            <label class="col-md-2 control-label">Tags</label>
-                            <div class="col-md-10">
+                            <label class="col-md-3 control-label">Tags</label>
+                            <div class="col-md-9">
                                 <input type="hidden" id="FileTags" class="form-control" value="," />
 
                                 <div id="SelectedFileTags" class="tagContainer">
                                     <h5>SELECTED TAGS</h5> <em>click on available tags below to add</em><br />
                                 </div>
+                                <span id="FileTagsError" class="text-danger error">At least one tag is required.</span>
                                 <div class="availabletags" style="border:solid 1px #ccc;padding:15px;border-radius:5px;margin-top:15px;">
                                     <h5>AVAILABLE TAGS</h5>
                                     <div id="UnselectedFileTags">
@@ -186,7 +160,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <div class="col-md-offset-2 col-md-10">
+                            <div class="col-md-offset-3 col-md-9">
                                 <input type="button" id="upload" value="Upload File" class="btn btn-success" />
                             </div>
                         </div>

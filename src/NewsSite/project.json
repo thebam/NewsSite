@@ -89,6 +89,10 @@
       "**/*.cshtml",
       "appsettings.json",
       "web.config"
+    ],
+    "exclude": [
+      "wwwroot/mediakitfiles",
+      "appsettins.json"
     ]
   },
 

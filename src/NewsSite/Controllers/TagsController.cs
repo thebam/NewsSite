@@ -163,11 +163,17 @@ namespace NewsSite.Controllers
                    where a.ArticleId == at.ArticleId && at.TagId == id
                    select a
                    ).ToList<Article>(),
+        //Change to MediaKitViewModel
         MediaKitFiles = (from m in _context.MediaKitFile
                     from mt in _context.MediaKitFileTag
                     where m.MediaKitFileId == mt.MediaKitFileId && mt.TagId == id
-                    select m
-                   ).ToList<MediaKitFile>()
+                    select( new MediaKitFileViewModel() {
+                        MediaKitFileId = m.MediaKitFileId,
+                        IconURL = m.URL,
+                        URL = m.URL,
+                        Description = m.Description
+                    } )
+                   ).ToList<MediaKitFileViewModel>()
     };
 
 

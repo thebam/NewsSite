@@ -1,19 +1,23 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace NewsSite.Models
 {
-    public class MediaKitFileViewModel
+    public class MediaKitFileViewModel : MediaKitFile
     {
         private string _iconUrl;
-        public int MediaKitFileId { get; set; }
-        public string URL { get; set; }
-        public string Description { get; set; }
         public string IconURL {
             get { return _iconUrl; }
             set
             {
                 _iconUrl = value;
+
+                string URL = "";
+                //URL = "/ssu/news";
+                URL = "";
+
 
                 string[] ext = _iconUrl.Split('.');
                 if (ext.Length > 0)
@@ -21,51 +25,50 @@ namespace NewsSite.Models
                     switch (ext[ext.Length-1].ToLower())
                     {
                         case "jpg":
-                            _iconUrl = "<a href=\"/mediakitfiles/" + _iconUrl + "\"><img class=\"img-responsive\" src=\"/mediakitfiles/" + _iconUrl + "\" /></a>";
+                            _iconUrl = "<a href=\"" + URL + "/mediakitfiles/" + _iconUrl + "\" target=\"_blank\"><img class=\"img-responsive\" src=\"" + URL + "/mediakitfiles/" + _iconUrl + "\" /></a>";
                             break;
                         case "gif":
-                            _iconUrl = "<a href=\"/mediakitfiles/" + _iconUrl + "\"><img class=\"img-responsive\" src=\"/mediakitfiles/" + _iconUrl + "\" /></a>";
+                            _iconUrl = "<a href=\"" + URL + "/mediakitfiles/" + _iconUrl + "\" target=\"_blank\"><img class=\"img-responsive\" src=\"" + URL + "/mediakitfiles/" + _iconUrl + "\" /></a>";
                             break;
                         case "png":
-                            _iconUrl = "<a href=\"/mediakitfiles/" + _iconUrl + "\"><img class=\"img-responsive\" src=\"/mediakitfiles/" + _iconUrl + "\" /></a>";
+                            _iconUrl = "<a href=\"" + URL + "/mediakitfiles/" + _iconUrl + "\" target=\"_blank\"><img class=\"img-responsive\" src=\"" + URL + "/mediakitfiles/" + _iconUrl + "\" /></a>";
                             break;
                         case "doc":
-                            _iconUrl = "<a href=\"/mediakitfiles/" + _iconUrl + "\"><img class=\"img-responsive\" src=\"/images/word_icon.png\" /></a>";
+                            _iconUrl = "<a href=\"" + URL + "/mediakitfiles/" + _iconUrl + "\" target=\"_blank\"><img class=\"img-responsive\" src=\"" + URL + "/images/word_icon.png\" /></a>";
                             break;
                         case "docx":
-                            _iconUrl = "<a href=\"/mediakitfiles/" + _iconUrl + "\"><img class=\"img-responsive\" src=\"/images/word_icon.png\" /></a>";
+                            _iconUrl = "<a href=\"" + URL + "/mediakitfiles/" + _iconUrl + "\" target=\"_blank\"><img class=\"img-responsive\" src=\"" + URL + "/images/word_icon.png\" /></a>";
                             break;
                         case "pdf":
-                            _iconUrl = "<a href=\"/mediakitfiles/" + _iconUrl + "\"><img class=\"img-responsive\" src=\"/images/pdf_icon.png\" /></a>";
+                            _iconUrl = "<a href=\"" + URL + "/mediakitfiles/" + _iconUrl + "\" target=\"_blank\"><img class=\"img-responsive\" src=\"" + URL + "/images/pdf_icon.png\" /></a>";
                             break;
                         case "xls":
-                            _iconUrl = "<a href=\"/mediakitfiles/" + _iconUrl + "\"><img class=\"img-responsive\" src=\"/images/excel_icon.png\" /></a>";
+                            _iconUrl = "<a href=\"" + URL + "/mediakitfiles/" + _iconUrl + "\" target=\"_blank\"><img class=\"img-responsive\" src=\"" + URL + "/images/excel_icon.png\" /></a>";
                             break;
                         case "xlsx":
-                            _iconUrl = "<a href=\"/mediakitfiles/" + _iconUrl + "\"><img class=\"img-responsive\" src=\"/images/excel_icon.png\" /></a>";
+                            _iconUrl = "<a href=\"" + URL + "/mediakitfiles/" + _iconUrl + "\" target=\"_blank\"><img class=\"img-responsive\" src=\"" + URL + "/images/excel_icon.png\" /></a>";
                             break;
                         case "ppt":
-                            _iconUrl = "<a href=\"/mediakitfiles/" + _iconUrl + "\"><img class=\"img-responsive\" src=\"/images/powerpoint_icon.png\" /></a>";
+                            _iconUrl = "<a href=\"" + URL + "/mediakitfiles/" + _iconUrl + "\" target=\"_blank\"><img class=\"img-responsive\" src=\"" + URL + "/images/powerpoint_icon.png\" /></a>";
                             break;
                         case "pptx":
-                            _iconUrl = "<a href=\"/mediakitfiles/" + _iconUrl + "\"><img class=\"img-responsive\" src=\"/images/powerpoint_icon.png\" /></a>";
+                            _iconUrl = "<a href=\"" + URL + "/mediakitfiles/" + _iconUrl + "\" target=\"_blank\"><img class=\"img-responsive\" src=\"" + URL + "/images/powerpoint_icon.png\" /></a>";
                             break;
                         default:
-                            _iconUrl = "<a href=\"/mediakitfiles/" + _iconUrl + "\"><img class=\"img-responsive\" src=\"/images/file_icon.png\" /></a>";
+                            _iconUrl = "<a href=\"" + URL + "/mediakitfiles/" + _iconUrl + "\" target=\"_blank\"><img class=\"img-responsive\" src=\"" + URL + "/images/file_icon.png\" /></a>";
                             break;
                     }
                 }
             }
 
         }
-
-        public DateTime CopyrightDate { get; set; }
-        public Owner Owner { get; set; }
+        
         public List<TagName> TagNames { get; set; }
     }
 
     public class TagName
     {
+        public int Id { get; set; }
         public string Name { get; set; }
     }
 }
