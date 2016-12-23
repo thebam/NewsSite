@@ -3,71 +3,51 @@
 @{
     ViewData["Title"] = "Create";
 }
-<style>
-    #SelectedFiles img, #UnselectedFiles img {
-        width:50px;
-        cursor:pointer;
-    }
-    #SelectedFiles img:hover, #UnselectedFiles img:hover {
-        width:125px;
-    }
-
-    .tagContainer {
-    border:solid 1px #ccc;
-    padding:15px;
-    border-radius:5px;
-    margin-top:15px;
-    }
-</style>
 <h2>New Article</h2>
 <form asp-action="Create">
     <div class="form-horizontal">
-        <hr />
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="form-group">
-            <label asp-for="Title" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
+            <label asp-for="Title" class="col-md-12"></label>
+            <div class="col-md-12">
                 <input asp-for="Title" class="form-control" onblur="copyValues('Title', 'URL', true); copyValues('Title', 'OGTitle', false);" />
                 <span asp-validation-for="Title" class="text-danger" />
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="URL" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
+            <label asp-for="URL" class="col-md-12"></label>
+            <div class="col-md-12">
                 <input asp-for="URL" class="form-control" onchange="formatFileName('URL');" />
                 <span asp-validation-for="URL" class="text-danger" />
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="Body" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
+            <label asp-for="Body" class="col-md-12"></label>
+            <div class="col-md-12">
                 <textarea asp-for="Body" class="form-control"></textarea>
 
                 <div class="alert alert-info" role="alert" style="margin-top:15px;">
                     <p><strong>The following text will be automatically added to each article:</strong></p>
                     <p><em>Established in 1890, Savannah State University is the oldest public historically black college or university in Georgia and the oldest institution of higher learning in the city of Savannah. The university's 4,900 students select majors from 27 undergraduate and five graduate programs in three colleges - Liberal Arts and Social Sciences, Business Administration and Sciences and Technology - and the School of Teacher Education.</em></p>
                 </div>
-
-                
                 <span asp-validation-for="Body" class="text-danger" />
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="StartDate" class="col-md-2 control-label"></label>
-            <div class="col-md-4">
+            <div class="col-md-6">
+                <label asp-for="StartDate"></label>
                 <input asp-for="StartDate" class="form-control" />
                 <span asp-validation-for="StartDate" class="text-danger" />
             </div>
-        
-            <label asp-for="EndDate" class="col-md-2 control-label"></label>
-            <div class="col-md-4">
+            <div class="col-md-6">
+                <label asp-for="EndDate"></label>
                 <input asp-for="EndDate" class="form-control" />
                 <span asp-validation-for="EndDate" class="text-danger" />
             </div>
         </div>
         <div class="form-group">
-            <label class="col-md-2 control-label">Tags</label>
-            <div class="col-md-10">
+            <label class="col-md-12">Tags</label>
+            <div class="col-md-12">
                 <input type="hidden" asp-for="ArticleTags" class="form-control" value="," />
                 
                 <div id="SelectedTags" class="tagContainer">
@@ -92,22 +72,22 @@
         </div>
         
         <div class="form-group">
-            <label asp-for="OGTitle" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
+            <label asp-for="OGTitle" class="col-md-12"></label>
+            <div class="col-md-12">
                 <input asp-for="OGTitle" class="form-control" />
                 <span asp-validation-for="OGTitle" class="text-danger" />
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="OGDescription" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
+            <label asp-for="OGDescription" class="col-md-12"></label>
+            <div class="col-md-12">
                 <input asp-for="OGDescription" class="form-control" />
                 <span asp-validation-for="OGDescription" class="text-danger" />
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="OGImage" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
+            <label asp-for="OGImage" class="col-md-12"></label>
+            <div class="col-md-12">
                 <select asp-for="OGImage" class="form-control">
                     @foreach (var mediaFile in ViewBag.mediaFiles)
                     {
@@ -119,8 +99,8 @@
         </div>
 
         <div class="form-group">
-            <label class="col-md-2 control-label">Media Kit Files</label>
-            <div class="col-md-10">
+            <label class="col-md-12">Media Kit Files</label>
+            <div class="col-md-12">
                 <input type="hidden" id="ArticleMediaKitFiles" class="form-control" value="," />
 
                 <div id="SelectedFiles" class="tagContainer">
@@ -154,8 +134,9 @@
 
 
         <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-lg btn-success" />
+            <div class="col-md-12">
+                <input type="submit" value="Create" class="btn btn-success" />
+                <a asp-action="Index" class="btn btn-default">Back to List</a>
             </div>
         </div>
     </div>
@@ -176,44 +157,36 @@
                     <h3>Upload New File</h3>
                     <div class="form-horizontal">
                         <div class="form-group">
-                            <label class="col-md-2 control-label">File</label>
-                            <div class="col-md-10">
+                            <label class="col-md-3 control-label">File</label>
+                            <div class="col-md-9">
                                 <input type="file" id="files" multiple class="form-control" />
+                                <span id="filesError" class="text-danger error">File is required.</span>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-md-2 control-label">Filename</label>
-                            <div class="col-md-10">
+                            <label class="col-md-3 control-label">Custom Url</label>
+                            <div class="col-md-9">
                                 <input type="text" id="url" class="form-control" onchange="formatFileName('url');" />
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-md-2 control-label">Alt Text</label>
-                            <div class="col-md-10">
+                            <label class="col-md-3 control-label">Alt Text</label>
+                            <div class="col-md-9">
                                 <textarea id="altText" class="form-control"></textarea>
+                                <span id="altTextError" class="text-danger error">Alt text is required.</span>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-md-2 control-label">Caption</label>
-                            <div class="col-md-10">
+                            <label class="col-md-3 control-label">Caption</label>
+                            <div class="col-md-9">
                                 <textarea id="Description" class="form-control"></textarea>
+                                <span id="descriptionError" class="text-danger error">Caption is required.</span>
                             </div>
                         </div>
+                        
                         <div class="form-group">
-                            <label class="col-md-2 control-label">File Type</label>
-                            <div class="col-md-10">
-                                <select id="MediaType" class="form-control">
-                                    <option value="image">Image</option>
-                                    <option value="word">Word Document</option>
-                                    <option value="pdf">PDF</option>
-                                    <option value="spreadsheet">Spreadsheet</option>
-                                    <option value="ppt">Presentation</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-md-2 control-label">Author</label>
-                            <div class="col-md-10">
+                            <label class="col-md-3 control-label">Author</label>
+                            <div class="col-md-9">
                                 <select id="OwnerId" class="form-control">
                                     @foreach (var owner in ViewBag.owners)
                                     {
@@ -269,22 +242,24 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-md-2 control-label">Copyright Date</label>
-                            <div class="col-md-10">
+                            <label class="col-md-3 control-label">Copyright Date</label>
+                            <div class="col-md-9">
                                 <input class="form-control" type="date" id="copyrightDate" name="copyrightDate" value="">
+                                <span id="copyrightDateError" class="text-danger error">Copyright date is required.</span>
                             </div>
                         </div>
 
                         
 
                         <div class="form-group">
-                            <label class="col-md-2 control-label">Tags</label>
-                            <div class="col-md-10">
+                            <label class="col-md-3 control-label">Tags</label>
+                            <div class="col-md-9">
                                 <input type="hidden" id="FileTags" class="form-control" value="," />
 
                                 <div id="SelectedFileTags"  class="tagContainer">
                                     <h5>SELECTED TAGS</h5> <em>click on available tags below to add</em><br />
                                 </div>
+                                <span id="FileTagsError" class="text-danger error">At least one tag is required.</span>
                                 <div  class="availabletags" style="border:solid 1px #ccc;padding:15px;border-radius:5px;margin-top:15px;">
                                     <h5>AVAILABLE TAGS</h5>
                                     <div id="UnselectedFileTags">
@@ -304,7 +279,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <div class="col-md-offset-2 col-md-10">
+                            <div class="col-md-offset-3 col-md-9">
                                 <input type="button" id="upload" value="Upload File" class="btn btn-success" />
                             </div>
                         </div>
@@ -318,10 +293,6 @@
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

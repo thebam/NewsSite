@@ -23,23 +23,21 @@ namespace NewsSite.Controllers
         public async Task<IActionResult> Index()
         {
             var query =
-    from t in _context.Tag
-    select new TagViewModel()
-    {
-        TagId= t.TagId,
-        TagName = t.TagName,
-        Enabled = t.Enabled,
-        DateCreated = t.DateCreated,
-        UsageCnt = (from m in _context.MediaKitFileTag
-                 where m.TagId == t.TagId
-                 select t).Count() + (from a in _context.ArticleTag
-                                      where a.TagId == t.TagId
-                                      select t).Count()
+            from t in _context.Tag
+            select new TagViewModel()
+            {
+                TagId= t.TagId,
+                TagName = t.TagName,
+                Enabled = t.Enabled,
+                DateCreated = t.DateCreated,
+                UsageCnt = (from m in _context.MediaKitFileTag
+                         where m.TagId == t.TagId
+                         select t).Count() + (from a in _context.ArticleTag
+                                              where a.TagId == t.TagId
+                                              select t).Count()
+            };
 
-    };
-
-            
-            return View(await query.OrderByDescending(t => t.UsageCnt).ToListAsync<TagViewModel>());
+            return View(await query.OrderByDescending(t => t.Enabled).ThenBy(ta=>ta.TagName).ToListAsync<TagViewModel>());
         }
 
 

@@ -73,3 +73,20 @@
 .error {
     display:none;
 }
+
+.content-inner form {
+padding-right:30px !important;
+}
+
+#SelectedFiles img, #UnselectedFiles img {
+        width:50px;
+        cursor:pointer;
+    }
+
+
+    .tagContainer {
+    border:solid 1px #ccc;
+    padding:15px;
+    border-radius:5px;
+    margin-top:15px;
+    }

@@ -54,7 +54,8 @@ namespace NewsSite.Controllers
                     .Join(_context.Tag, mt => mt.TagId, t => t.TagId, (mt, t) => new { mt, t })
                     .Select(tt => new TagName
                     {
-                        Name = tt.t.TagName
+                        Name = tt.t.TagName,
+                        Id = tt.t.TagId
                     }).ToList()
             });
 

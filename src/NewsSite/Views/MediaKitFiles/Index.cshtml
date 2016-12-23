@@ -27,7 +27,7 @@
                 <strong>tags</strong><br />
                 @foreach (var tag in mediaKitFile.TagNames)
                 {
-                    <div class="btn btn-sm btn-default">@tag.Name</div>
+                    <a class="btn btn-sm btn-default" asp-controller="Tags" asp-action="Edit" asp-route-id="@tag.Id">@tag.Name</a>
                 }
             </p>
         </div>

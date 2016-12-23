@@ -42,7 +42,8 @@ namespace NewsSite.Controllers
                     .Join(_context.Tag, mt => mt.TagId, t => t.TagId, (mt, t) => new { mt, t })
                     .Select(tt => new TagName
                     {
-                        Name = tt.t.TagName
+                        Name = tt.t.TagName,
+                        Id = tt.t.TagId
                     }).ToList()
                 }).OrderByDescending(m=>m.DateModified);
             
@@ -500,6 +501,8 @@ namespace NewsSite.Controllers
                 }
             }
             string rawFilename = Request.Form["url"].ToString().Trim().ToLower();
+            
+            
             if (!string.IsNullOrEmpty(Request.Form["copyrightDate"]))
             {
                 try
@@ -577,26 +580,50 @@ namespace NewsSite.Controllers
             {
                 
                 var filename = "";
+                var rawFile = "";
                 var convertedFilename = "";
                 var fileExt = "";
                 foreach (var file in files)
                 {
-                    filename = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+                    rawFile = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
                     
-                    string[] fileParts = filename.ToString().Split('.');
+                    string[] fileParts = rawFile.ToString().Split('.');
 
                     if (fileParts.Length >= 2)
                     {
                         fileExt = "." + fileParts[fileParts.Length - 1];
                     }
 
-                    filename = hostingEnv.WebRootPath + $@"\mediakitfiles\{Request.Form["url"] + fileExt}";
+                    if (!string.IsNullOrEmpty(rawFilename))
+                    {
+                        filename = hostingEnv.WebRootPath + $@"\mediakitfiles\{rawFilename + fileExt}";
+                        convertedFilename = rawFilename + fileExt;
+                        if (fileExists(rawFilename + fileExt))
+                        {
+                            blnError = true;
+                            errorMessage = "Media kit file cannot be updated because there is a problem with the file.";
+                            errorElement = "files";
+                            return Json(new { status = "error", message = errorMessage, element = errorElement });
+                        }
+                    }
+                    else {
+                        filename = hostingEnv.WebRootPath + $@"\mediakitfiles\{rawFile}";
+                        convertedFilename = rawFile;
+                        if (fileExists(filename))
+                        {
+                            blnError = true;
+                            errorMessage = "Media kit file cannot be updated because there is a problem with the file.";
+                            errorElement = "files";
+                            return Json(new { status = "error", message = errorMessage, element = errorElement });
+                        }
+                    }
+                    
                     using (FileStream fs = System.IO.File.Create(filename))
                     {
                         file.CopyTo(fs);
                         fs.Flush();
                     }
-                    convertedFilename = Request.Form["url"] + fileExt;
+                    
                 }
                 MediaKitFile newKitFile = new MediaKitFile();
                 MediaKitFile tempKitFile = new MediaKitFile();
@@ -770,7 +797,7 @@ namespace NewsSite.Controllers
                 if (mediaKitFile != null)
                 {
                     string filename = "";
-
+                    string rawFile = "";
                     var files = Request.Form.Files;
                     if (Request.Form.Files.Count() >= 1)
                     {
@@ -784,9 +811,9 @@ namespace NewsSite.Controllers
 
                         foreach (var file in files)
                         {
-                            filename = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+                            rawFile = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
                             string tempNewFileName = Request.Form["url"].ToString().Trim();
-                            string uploadFileExt = getFileExt(filename);
+                            string uploadFileExt = getFileExt(rawFile);
                             mediaKitFile.MediaType = getFileType(uploadFileExt);
                             string cleanFileName = "";
                             if (!string.IsNullOrEmpty(tempNewFileName))
@@ -803,12 +830,45 @@ namespace NewsSite.Controllers
 
                                 filename = hostingEnv.WebRootPath + $@"\mediakitfiles\{cleanFileName + uploadFileExt}";
 
+
+                                if (!string.IsNullOrEmpty(rawFilename))
+                                {
+                                    filename = hostingEnv.WebRootPath + $@"\mediakitfiles\{rawFilename + uploadFileExt}";
+
+                                    if (fileExists(rawFilename + uploadFileExt))
+                                    {
+                                        blnError = true;
+                                        errorMessage = "Media kit file cannot be updated because there is a problem with the file.";
+                                        errorElement = "files";
+                                        return Json(new { status = "error", message = errorMessage, element = errorElement });
+                                    }
+                                    else {
+                                        mediaKitFile.URL = cleanFileName + uploadFileExt;
+                                    }
+                                }
+                                else
+                                {
+                                    filename = hostingEnv.WebRootPath + $@"\mediakitfiles\{rawFile}";
+                                    if (fileExists(rawFile))
+                                    {
+                                        blnError = true;
+                                        errorMessage = "Media kit file cannot be updated because there is a problem with the file.";
+                                        errorElement = "files";
+                                        return Json(new { status = "error", message = errorMessage, element = errorElement });
+                                    }
+                                    else {
+                                        mediaKitFile.URL = rawFile;
+                                    }
+                                }
+
+
+
                                 using (FileStream fs = System.IO.File.Create(filename))
                                 {
                                     file.CopyTo(fs);
                                     fs.Flush();
                                 }
-                                mediaKitFile.URL = cleanFileName + uploadFileExt;
+                                
                             }
                             else
                             {
@@ -953,6 +1013,17 @@ namespace NewsSite.Controllers
                     break;
             }
             return output;
+        }
+
+        private bool fileExists(String fileName) {
+            string filename = hostingEnv.WebRootPath + $@"\mediakitfiles\{fileName}";
+            if (System.IO.File.Exists(filename))
+            {
+                return true;
+            }
+            else {
+                return false;
+            }
         }
 
     }
